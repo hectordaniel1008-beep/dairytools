@@ -223,3 +223,12 @@
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
 }
+
+@media (max-width: 480px) {
+  .page { padding: 16px; }
+  .card { padding: 28px 20px; }
+  .logoImg { width: 60px; height: 60px; }
+  .logoTitle { font-size: 1.5rem; }
+  .title { font-size: var(--font-size-xl); }
+  .demoBox { padding: 10px; }
+}

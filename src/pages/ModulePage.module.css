@@ -170,3 +170,37 @@
   padding: 40px !important;
   font-size: var(--font-size-sm);
 }
+
+/* ════════════════════════════════
+   RESPONSIVO
+════════════════════════════════ */
+@media (max-width: 767px) {
+  .page { gap: 14px; }
+
+  /* Encabezado apilado */
+  .header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .title     { font-size: var(--font-size-lg); }
+  .subtitle  { font-size: var(--font-size-xs); }
+  .btnPrimary { font-size: var(--font-size-xs); padding: 8px 14px; }
+
+  /* Tabla con scroll horizontal */
+  .tableWrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .table {
+    min-width: 520px;
+  }
+  .table th,
+  .table td {
+    padding: 10px 12px;
+    white-space: nowrap;
+  }
+
+  /* Toolbar */
+  .toolbar { flex-wrap: wrap; }
+  .searchWrap { max-width: 100%; flex: 1 1 200px; }
+}

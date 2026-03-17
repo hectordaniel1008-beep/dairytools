@@ -176,3 +176,35 @@
 .statusWarn { background: var(--color-warning); }
 .moduleName { flex: 1; color: var(--color-text); }
 .moduleVal  { color: var(--color-text-muted); font-size: var(--font-size-xs); }
+
+/* ════════════════════════════════
+   RESPONSIVO
+════════════════════════════════ */
+@media (max-width: 767px) {
+  .page { gap: 16px; }
+
+  .hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 18px 20px;
+  }
+  .greeting { font-size: var(--font-size-xl); }
+  .heroBadge { align-self: flex-start; }
+
+  .kpiGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .bottomGrid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .valor { font-size: var(--font-size-2xl); }
+}
+
+@media (max-width: 420px) {
+  .kpiGrid { grid-template-columns: 1fr; }
+}

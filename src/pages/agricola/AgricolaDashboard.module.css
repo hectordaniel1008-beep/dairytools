@@ -80,3 +80,9 @@
   transition: opacity var(--transition);
 }
 .verTodo:hover { opacity: 0.75; }
+
+@media (max-width: 767px) {
+  .hero { padding: 16px 18px; }
+  .heroIcon { width: 42px; height: 42px; }
+  .heroTitle { font-size: var(--font-size-lg); }
+}

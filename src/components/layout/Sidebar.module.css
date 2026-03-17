@@ -152,3 +152,29 @@
 .navBottom {
   padding: 10px 10px 16px;
 }
+
+/* ── Botón cerrar (solo móvil) ── */
+.closeBtn {
+  display: none;
+  margin-left: auto;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  width: 32px; height: 32px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--transition);
+}
+.closeBtn:hover { background: var(--color-bg-subtle); }
+
+@media (max-width: 767px) {
+  .closeBtn { display: flex; }
+
+  .sidebar {
+    width: 280px;
+    min-width: 280px;
+  }
+}

@@ -1,11 +1,15 @@
 import { useState } from 'react'
-import { Bell, ChevronDown, LogOut, User, Check } from 'lucide-react'
+import { Bell, ChevronDown, LogOut, User, Check, Menu } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { useEmpresa, getIniciales } from '../../context/EmpresaContext'
 import { useNavigate } from 'react-router-dom'
 import styles from './Topbar.module.css'
 
-export default function Topbar() {
+interface Props {
+  onMenuToggle: () => void
+}
+
+export default function Topbar({ onMenuToggle }: Props) {
   const { user, logout } = useAuth()
   const { empresas, empresaActual, setEmpresaActual } = useEmpresa()
   const navigate = useNavigate()
@@ -16,60 +20,62 @@ export default function Topbar() {
 
   function handleLogout() { logout(); navigate('/login') }
 
-  const initials = user?.nombre
-    ? user.nombre.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()
-    : 'U'
-
-  const accentColor    = empresaActual?.color ?? 'var(--color-primary)'
-  const empresaInic    = empresaActual ? getIniciales(empresaActual.nombre) : '?'
-
-  function closeAll() { setMenuOpen(false); setNotiOpen(false); setEmpresaOpen(false) }
+  const initials     = user?.nombre ? user.nombre.split(' ').map(n => n[0]).slice(0,2).join('').toUpperCase() : 'U'
+  const accentColor  = empresaActual?.color ?? 'var(--color-primary)'
+  const empresaInic  = empresaActual ? getIniciales(empresaActual.nombre) : '?'
 
   return (
     <header className={styles.topbar}>
 
-      {/* ── Selector de empresa (izquierda) ── */}
-      <div className={styles.empresaWrap}>
-        <button
-          className={styles.empresaBtn}
-          onClick={() => { setEmpresaOpen(!empresaOpen); setMenuOpen(false); setNotiOpen(false) }}
-        >
-          <div className={styles.empresaLogo} style={{ background: accentColor }}>
-            {empresaInic}
-          </div>
-          <div className={styles.empresaInfo}>
-            <span className={styles.empresaNombre}>{empresaActual?.nombre ?? 'Sin empresa'}</span>
-            <span className={styles.empresaSub}>{empresaActual?.rfc ?? ''}</span>
-          </div>
-          <ChevronDown size={14} className={`${styles.empresaChevron} ${empresaOpen ? styles.open : ''}`} />
+      {/* ── Izquierda: hamburguesa (móvil) + selector empresa ── */}
+      <div className={styles.left}>
+
+        {/* Botón hamburguesa — solo móvil */}
+        <button className={styles.menuBtn} onClick={onMenuToggle} aria-label="Abrir menú">
+          <Menu size={20} />
         </button>
 
-        {empresaOpen && (
-          <div className={styles.empresaDropdown}>
-            <p className={styles.dropLabel}>Seleccionar empresa</p>
-            {empresas.map((emp) => (
-              <button
-                key={emp.id}
-                className={styles.empresaOption}
-                onClick={() => { setEmpresaActual(emp); setEmpresaOpen(false) }}
-              >
-                <div className={styles.optionLogo} style={{ background: emp.color ?? 'var(--color-primary)' }}>
-                  {getIniciales(emp.nombre)}
-                </div>
-                <span className={styles.optionNombre}>{emp.nombre}</span>
-                {empresaActual?.id === emp.id && <Check size={13} className={styles.optionCheck} />}
-              </button>
-            ))}
-          </div>
-        )}
+        {/* Selector de empresa */}
+        <div className={styles.empresaWrap}>
+          <button
+            className={styles.empresaBtn}
+            onClick={() => { setEmpresaOpen(!empresaOpen); setMenuOpen(false); setNotiOpen(false) }}
+          >
+            <div className={styles.empresaLogo} style={{ background: accentColor }}>
+              {empresaInic}
+            </div>
+            <div className={styles.empresaInfo}>
+              <span className={styles.empresaNombre}>{empresaActual?.nombre ?? 'Sin empresa'}</span>
+              <span className={styles.empresaSub}>{empresaActual?.rfc ?? ''}</span>
+            </div>
+            <ChevronDown size={14} className={`${styles.empresaChevron} ${empresaOpen ? styles.open : ''}`} />
+          </button>
+
+          {empresaOpen && (
+            <div className={styles.empresaDropdown}>
+              <p className={styles.dropLabel}>Seleccionar empresa</p>
+              {empresas.map(emp => (
+                <button key={emp.id} className={styles.empresaOption}
+                  onClick={() => { setEmpresaActual(emp); setEmpresaOpen(false) }}>
+                  <div className={styles.optionLogo} style={{ background: emp.color ?? 'var(--color-primary)' }}>
+                    {getIniciales(emp.nombre)}
+                  </div>
+                  <span className={styles.optionNombre}>{emp.nombre}</span>
+                  {empresaActual?.id === emp.id && <Check size={13} className={styles.optionCheck} />}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* ── Acciones (derecha) ── */}
+      {/* ── Derecha: notificaciones + usuario ── */}
       <div className={styles.actions}>
 
         {/* Notificaciones */}
         <div className={styles.notifWrap}>
-          <button className={styles.iconBtn} onClick={() => { setNotiOpen(!notiOpen); setMenuOpen(false); setEmpresaOpen(false) }}>
+          <button className={styles.iconBtn}
+            onClick={() => { setNotiOpen(!notiOpen); setMenuOpen(false); setEmpresaOpen(false) }}>
             <Bell size={18} />
             <span className={styles.notifDot} />
           </button>
@@ -84,7 +90,7 @@ export default function Topbar() {
                 { id: 1, msg: 'Nuevo registro de leche ingresado', time: 'Hace 5 min', tipo: 'info' },
                 { id: 2, msg: 'Peso promedio por debajo del límite', time: 'Hace 1 h', tipo: 'warning' },
                 { id: 3, msg: 'Cosecha agrícola completada', time: 'Hace 3 h', tipo: 'success' },
-              ].map((n) => (
+              ].map(n => (
                 <div key={n.id} className={`${styles.notifItem} ${styles[n.tipo]}`}>
                   <span className={styles.notifDotColor} />
                   <div>
@@ -101,8 +107,10 @@ export default function Topbar() {
 
         {/* Usuario */}
         <div className={styles.userWrap}>
-          <button className={styles.userBtn} onClick={() => { setMenuOpen(!menuOpen); setNotiOpen(false); setEmpresaOpen(false) }}>
+          <button className={styles.userBtn}
+            onClick={() => { setMenuOpen(!menuOpen); setNotiOpen(false); setEmpresaOpen(false) }}>
             <div className={styles.avatar}>{initials}</div>
+            {/* Nombre y rol — ocultos en móvil */}
             <div className={styles.userInfo}>
               <span className={styles.userName}>{user?.nombre ?? 'Usuario'}</span>
               <span className={styles.userRole}>{user?.rol ?? 'operador'}</span>

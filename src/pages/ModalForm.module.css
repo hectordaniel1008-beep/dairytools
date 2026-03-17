@@ -104,3 +104,21 @@
   font-family: inherit;
 }
 .btnSave:hover { opacity: 0.9; transform: translateY(-1px); }
+
+/* ════════════════════════════════
+   RESPONSIVO
+════════════════════════════════ */
+@media (max-width: 767px) {
+  .row2 {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .actions {
+    flex-direction: column-reverse;
+  }
+  .btnCancel,
+  .btnSave {
+    width: 100%;
+    justify-content: center;
+  }
+}
