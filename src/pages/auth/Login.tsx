@@ -45,7 +45,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <h2 className={styles.title}>Bienvenido</h2>
+        <h2 className={styles.title}>Bienvenido usuario</h2>
         <p className={styles.subtitle}>Ingresa tus credenciales para continuar</p>
 
         <form onSubmit={handleSubmit} className={styles.form}>
