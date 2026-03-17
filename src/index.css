@@ -1,0 +1,85 @@
+/* ============================================
+   DAIRYTOOLSAPP
+   Paleta extraída del logotipo oficial
+   ============================================ */
+
+:root {
+  /* --- Azules del logo DairyTools --- */
+  --color-primary:       #1e5a96;   /* Azul principal — texto "DairyTools" y toro */
+  --color-primary-dark:  #1e3c78;   /* Azul muy oscuro — sombras y hover */
+  --color-primary-light: #3c78b4;   /* Azul medio — bordes y acentos */
+  --color-primary-bg:    #e8eef8;   /* Azul pálido — fondos de chips */
+
+  /* --- Verde secundario (producción agrícola) --- */
+  --color-secondary:       #2da44e;
+  --color-secondary-dark:  #1e7a39;
+  --color-secondary-light: #4bc46d;
+  --color-secondary-bg:    #e6f6ec;
+
+  /* --- Neutrales --- */
+  --color-bg:         #ffffff;
+  --color-bg-subtle:  #f4f7fb;   /* Ligeramente azulado, coherente con el logo */
+  --color-bg-muted:   #e8eef8;
+  --color-border:     #d0daea;
+  --color-text:       #1a2a40;   /* Azul muy oscuro para texto */
+  --color-text-muted: #5a7090;
+  --color-text-light: #90a8c0;
+
+  /* --- Estado --- */
+  --color-success: #2da44e;
+  --color-warning: #e69519;
+  --color-error:   #d1363b;
+  --color-info:    #1e5a96;
+
+  /* --- Sidebar — azul marino extraído del logo --- */
+  --sidebar-width:  260px;
+  --sidebar-bg:     #12294a;       /* Azul marino oscuro, coherente con #1e3c78 */
+  --sidebar-text:   #b8cce0;
+  --sidebar-active: #1e5a96;
+  --sidebar-hover:  rgba(120,150,210,0.10);   /* tinte del azul claro del hexágono */
+  --sidebar-border: rgba(120,150,210,0.12);
+
+  /* --- Topbar --- */
+  --topbar-height: 64px;
+
+  /* --- Sombras --- */
+  --shadow-sm: 0 1px 3px rgba(30,60,120,0.07), 0 1px 2px rgba(30,60,120,0.04);
+  --shadow-md: 0 4px 12px rgba(30,60,120,0.10);
+  --shadow-lg: 0 8px 24px rgba(30,60,120,0.13);
+
+  /* --- Bordes --- */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  /* --- Tipografía --- */
+  --font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-size-xs:   0.75rem;
+  --font-size-sm:   0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg:   1.125rem;
+  --font-size-xl:   1.25rem;
+  --font-size-2xl:  1.5rem;
+  --font-size-3xl:  1.875rem;
+
+  /* --- Transiciones --- */
+  --transition: 150ms ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, #root { height: 100%; }
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; font-family: inherit; }
+input, select, textarea { font-family: inherit; }
+
+::-webkit-scrollbar       { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: var(--color-border); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-light); }

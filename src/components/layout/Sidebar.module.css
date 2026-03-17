@@ -1,0 +1,154 @@
+/* ============================================
+   Sidebar — fondo blanco, texto azul, sin separadores
+   ============================================ */
+
+.sidebar {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  height: 100vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex-shrink: 0;
+}
+
+/* ── Logo de la app ── */
+.appBrand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  height: var(--topbar-height);
+  flex-shrink: 0;
+}
+
+.appLogo {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(30,60,120,0.15);
+}
+
+.appBrandText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.appName {
+  display: block;
+  color: var(--color-primary-dark);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* ── Navegación ── */
+.nav {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 10px;
+  gap: 2px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  transition: background var(--transition), color var(--transition);
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.navItem:hover {
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+}
+.navItem:hover .navIcon { color: var(--color-primary); }
+
+.navItem.active {
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+}
+.navItem.active .navIcon { color: var(--color-primary); }
+
+/* Módulo activo */
+.groupActive {
+  background: var(--color-primary-bg);
+  color: var(--color-primary-dark);
+  font-weight: 700;
+}
+.groupActive .navIcon { color: var(--color-primary); }
+
+.navIcon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--color-text-light);
+  transition: color var(--transition);
+}
+
+.navText { flex: 1; }
+
+/* Sub-items — solo Registros */
+.subItems {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 2px 0 6px 42px;
+  animation: expandIn 0.12s ease;
+}
+@keyframes expandIn {
+  from { opacity: 0; transform: translateY(-4px); }
+}
+
+.subItem {
+  display: block;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color var(--transition);
+  position: relative;
+}
+.subItem::before {
+  content: '';
+  position: absolute;
+  left: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--color-border);
+  transition: background var(--transition);
+}
+.subItem:hover { color: var(--color-primary); }
+.subItem:hover::before { background: var(--color-primary-light); }
+.subItem.subActive { color: var(--color-primary); font-weight: 600; }
+.subItem.subActive::before { background: var(--color-primary); }
+
+/* ── Spacer y pie ── */
+.spacer { flex: 1; }
+
+.navBottom {
+  padding: 10px 10px 16px;
+}

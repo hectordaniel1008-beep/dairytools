@@ -1,0 +1,178 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  max-width: 1280px;
+}
+
+/* Hero */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  color: #fff;
+}
+.greeting {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.date {
+  font-size: var(--font-size-sm);
+  opacity: 0.75;
+  text-transform: capitalize;
+}
+.heroBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.15);
+  padding: 8px 14px;
+  border-radius: 99px;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+.heroDot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 0 3px rgba(74,222,128,0.3);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(74,222,128,0.3); }
+  50%       { box-shadow: 0 0 0 6px rgba(74,222,128,0.1); }
+}
+
+/* Secciones */
+.sectionTitle {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 14px;
+}
+
+/* Grid de KPIs */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+/* Panel inferior */
+.bottomGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 900px) {
+  .bottomGrid { grid-template-columns: 1fr; }
+}
+
+/* Card genérica */
+.card {
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.cardTitle {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text);
+}
+.cardBadge {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  background: var(--color-bg-muted);
+  padding: 3px 8px;
+  border-radius: 99px;
+}
+
+/* Actividad */
+.activityList { display: flex; flex-direction: column; gap: 2px; }
+.activityItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 8px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition);
+}
+.activityItem:hover { background: var(--color-bg-subtle); }
+
+.activityDot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.activityBody { flex: 1; min-width: 0; }
+.activityModule {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  display: block;
+}
+.activityDesc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.activityTime {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-light);
+  flex-shrink: 0;
+}
+
+/* Accesos rápidos */
+.quickLinks { display: flex; flex-direction: column; gap: 8px; }
+.quickLink {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  transition: opacity var(--transition), transform var(--transition);
+  color: #fff;
+}
+.quickLink:hover { opacity: 0.9; transform: translateX(2px); }
+
+.quickLink.primary   { background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); }
+.quickLink.secondary { background: linear-gradient(135deg, var(--color-secondary), var(--color-secondary-dark)); }
+.quickLink.warning   { background: linear-gradient(135deg, #e69519, #c07a10); }
+
+.quickIcon { display: flex; align-items: center; }
+
+/* Estado de módulos */
+.moduleStatus { display: flex; flex-direction: column; gap: 10px; }
+.moduleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--font-size-sm);
+}
+.statusDot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.statusOk   { background: var(--color-success); }
+.statusWarn { background: var(--color-warning); }
+.moduleName { flex: 1; color: var(--color-text); }
+.moduleVal  { color: var(--color-text-muted); font-size: var(--font-size-xs); }

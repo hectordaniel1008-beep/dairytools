@@ -1,0 +1,69 @@
+.hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(135deg, #e69519 0%, #c07a10 100%);
+  border-radius: var(--radius-lg);
+  padding: 22px 26px;
+  color: #fff;
+}
+.heroIcon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.heroTitle { font-size: var(--font-size-xl); font-weight: 700; line-height: 1.1; }
+.heroSub   { font-size: var(--font-size-sm); opacity: 0.75; margin-top: 3px; }
+
+/* Especies */
+.especieList { display: flex; flex-direction: column; gap: 14px; }
+.especieRow  { display: flex; align-items: flex-start; gap: 12px; }
+.especieDot  {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+.especieInfo { flex: 1; }
+.especieHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+.especieNombre   { font-size: var(--font-size-sm); font-weight: 600; color: var(--color-text); }
+.especieCantidad { font-size: var(--font-size-xs); color: var(--color-text-muted); }
+.especieStats {
+  display: flex;
+  gap: 14px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+.especieStats strong { color: var(--color-text); }
+
+/* Alertas */
+.alertList { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.alertItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+}
+.alertItem.warning { background: #fff8e6; color: #92560a; border-left: 3px solid var(--color-warning); }
+.alertItem.info    { background: var(--color-primary-bg); color: var(--color-primary-dark); border-left: 3px solid var(--color-primary); }
+.alertIcon { flex-shrink: 0; margin-top: 1px; }
+
+.verTodo {
+  display: inline-block;
+  font-size: var(--font-size-sm);
+  color: #e69519;
+  font-weight: 500;
+  text-decoration: none;
+  transition: opacity var(--transition);
+}
+.verTodo:hover { opacity: 0.75; }

@@ -1,0 +1,85 @@
+.hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  border-radius: var(--radius-lg);
+  padding: 22px 26px;
+  color: #fff;
+}
+.heroIcon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.heroTitle {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  line-height: 1.1;
+}
+.heroSub {
+  font-size: var(--font-size-sm);
+  opacity: 0.75;
+  margin-top: 3px;
+}
+
+/* Tabla compacta */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+.table th {
+  padding: 8px 12px;
+  text-align: left;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-border);
+}
+.table td {
+  padding: 9px 12px;
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-bg-subtle);
+  vertical-align: middle;
+}
+.table tbody tr:last-child td { border-bottom: none; }
+.table tbody tr:hover td { background: var(--color-bg-subtle); }
+
+.totalPill {
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+
+/* Alertas */
+.alertList { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.alertItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+}
+.alertItem.warning { background: #fff8e6; color: #92560a; border-left: 3px solid var(--color-warning); }
+.alertItem.info    { background: var(--color-primary-bg); color: var(--color-primary-dark); border-left: 3px solid var(--color-primary); }
+.alertIcon { flex-shrink: 0; margin-top: 1px; }
+
+.verTodo {
+  display: inline-block;
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+  font-weight: 500;
+  text-decoration: none;
+  transition: opacity var(--transition);
+}
+.verTodo:hover { opacity: 0.75; }
