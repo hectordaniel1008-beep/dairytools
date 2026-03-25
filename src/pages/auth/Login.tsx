@@ -8,11 +8,11 @@ export default function LoginPage() {
   const { login } = useAuth()
   const navigate = useNavigate()
 
-  const [email, setEmail] = useState('')
+  const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
-  const [showPwd, setShowPwd] = useState(false)
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [showPwd, setShowPwd]   = useState(false)
+  const [error, setError]       = useState('')
+  const [loading, setLoading]   = useState(false)
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -20,9 +20,9 @@ export default function LoginPage() {
     setLoading(true)
     try {
       await login(email, password)
-      navigate('/dashboard')
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Error al iniciar sesión')
+      navigate('/leche/dashboard')
+    } catch {
+      setError('El correo electrónico o la contraseña son incorrectos. Verifica tus datos e intenta de nuevo.')
     } finally {
       setLoading(false)
     }
@@ -45,7 +45,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <h2 className={styles.title}>Bienvenido usuario</h2>
+        <h2 className={styles.title}>Bienvenido</h2>
         <p className={styles.subtitle}>Ingresa tus credenciales para continuar</p>
 
         <form onSubmit={handleSubmit} className={styles.form}>
@@ -103,13 +103,17 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Panel demo — eliminar cuando conectes el servidor */}
+        <p className={styles.footer}>
+          © {new Date().getFullYear()} DairyTools · Todos los derechos reservados
+        </p>
+
+        {/* Panel de accesos rápidos — solo desarrollo */}
         <div className={styles.demoBox}>
           <p className={styles.demoTitle}>🧪 Accesos de prueba</p>
           {[
-            { email: 'admin@dairytools.com', pwd: 'admin123', rol: 'Admin' },
+            { email: 'admin@dairytools.com',      pwd: 'admin123', rol: 'Admin' },
             { email: 'supervisor@dairytools.com', pwd: 'super123', rol: 'Supervisor' },
-            { email: 'operador@dairytools.com', pwd: 'oper123', rol: 'Operador' },
+            { email: 'operador@dairytools.com',   pwd: 'oper123',  rol: 'Operador' },
           ].map((u) => (
             <button
               key={u.email}
@@ -122,10 +126,6 @@ export default function LoginPage() {
             </button>
           ))}
         </div>
-
-        <p className={styles.footer}>
-          © {new Date().getFullYear()} DairyToolsApp · Todos los derechos reservados
-        </p>
       </div>
     </div>
   )

@@ -46,7 +46,7 @@ export default function Topbar({ onMenuToggle }: Props) {
             </div>
             <div className={styles.empresaInfo}>
               <span className={styles.empresaNombre}>{empresaActual?.nombre ?? 'Sin empresa'}</span>
-              <span className={styles.empresaSub}>{empresaActual?.rfc ?? ''}</span>
+              <span className={styles.empresaSub}>{empresaActual?.clave ?? ''}</span>
             </div>
             <ChevronDown size={14} className={`${styles.empresaChevron} ${empresaOpen ? styles.open : ''}`} />
           </button>

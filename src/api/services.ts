@@ -1,7 +1,7 @@
 import api from './client'
 import type {
   ApiResponse,
-  User,
+  LoginResponse,
   Notification,
   ProduccionLeche,
   ProduccionAgricola,
@@ -9,102 +9,98 @@ import type {
   PaginationParams,
 } from '../types'
 
-// ============================================
-// Auth
-// ============================================
+// ── Auth ─────────────────────────────────────────────────────
 export const authService = {
   login: (email: string, password: string) =>
-    api.post<ApiResponse<{ token: string; user: User }>>('/auth/login.php', { email, password }),
+    api.post<ApiResponse<LoginResponse>>('/auth/login', { email, password }),
 
   logout: () =>
-    api.post<ApiResponse<null>>('/auth/logout.php'),
+    api.post<ApiResponse<null>>('/auth/logout'),
 
   perfil: () =>
-    api.get<ApiResponse<User>>('/auth/perfil.php'),
+    api.get<ApiResponse<LoginResponse>>('/auth/perfil'),
+
+  cambiarEmpresa: (empresa_id: number) =>
+    api.post<ApiResponse<{ empresa_activa: import('../types').Empresa }>>(
+      '/auth/cambiar-empresa',
+      { empresa_id }
+    ),
 }
 
-// ============================================
-// Notificaciones
-// ============================================
+// ── Notificaciones ───────────────────────────────────────────
 export const notificacionesService = {
   listar: () =>
-    api.get<ApiResponse<Notification[]>>('/notificaciones/listar.php'),
+    api.get<ApiResponse<Notification[]>>('/notificaciones'),
 
   marcarLeida: (id: number) =>
-    api.put<ApiResponse<null>>(`/notificaciones/actualizar.php`, { id }),
+    api.patch<ApiResponse<null>>(`/notificaciones/${id}/leer`),
 }
 
-// ============================================
-// Producción de Leche
-// ============================================
+// ── Producción de Leche ──────────────────────────────────────
 export const lecheService = {
   listar: (params?: PaginationParams) =>
-    api.get<ApiResponse<ProduccionLeche[]>>('/leche/listar.php', { params }),
+    api.get<ApiResponse<ProduccionLeche[]>>('/leche', { params }),
 
   obtener: (id: number) =>
-    api.get<ApiResponse<ProduccionLeche>>(`/leche/obtener.php?id=${id}`),
+    api.get<ApiResponse<ProduccionLeche>>(`/leche/${id}`),
 
-  crear: (data: Omit<ProduccionLeche, 'id'>) =>
-    api.post<ApiResponse<ProduccionLeche>>('/leche/crear.php', data),
+  crear: (data: Omit<ProduccionLeche, 'id' | 'created_at'>) =>
+    api.post<ApiResponse<ProduccionLeche>>('/leche', data),
 
   actualizar: (id: number, data: Partial<ProduccionLeche>) =>
-    api.put<ApiResponse<ProduccionLeche>>('/leche/actualizar.php', { id, ...data }),
+    api.patch<ApiResponse<ProduccionLeche>>(`/leche/${id}`, data),
 
   eliminar: (id: number) =>
-    api.delete<ApiResponse<null>>(`/leche/eliminar.php?id=${id}`),
+    api.delete<ApiResponse<null>>(`/leche/${id}`),
 
   resumen: () =>
     api.get<ApiResponse<{ total_dia: number; total_mes: number; promedio: number }>>(
-      '/leche/resumen.php'
+      '/leche/resumen'
     ),
 }
 
-// ============================================
-// Producción Agrícola
-// ============================================
+// ── Producción Agrícola ──────────────────────────────────────
 export const agricolaService = {
   listar: (params?: PaginationParams) =>
-    api.get<ApiResponse<ProduccionAgricola[]>>('/agricola/listar.php', { params }),
+    api.get<ApiResponse<ProduccionAgricola[]>>('/agricola', { params }),
 
   obtener: (id: number) =>
-    api.get<ApiResponse<ProduccionAgricola>>(`/agricola/obtener.php?id=${id}`),
+    api.get<ApiResponse<ProduccionAgricola>>(`/agricola/${id}`),
 
-  crear: (data: Omit<ProduccionAgricola, 'id'>) =>
-    api.post<ApiResponse<ProduccionAgricola>>('/agricola/crear.php', data),
+  crear: (data: Omit<ProduccionAgricola, 'id' | 'created_at'>) =>
+    api.post<ApiResponse<ProduccionAgricola>>('/agricola', data),
 
   actualizar: (id: number, data: Partial<ProduccionAgricola>) =>
-    api.put<ApiResponse<ProduccionAgricola>>('/agricola/actualizar.php', { id, ...data }),
+    api.patch<ApiResponse<ProduccionAgricola>>(`/agricola/${id}`, data),
 
   eliminar: (id: number) =>
-    api.delete<ApiResponse<null>>(`/agricola/eliminar.php?id=${id}`),
+    api.delete<ApiResponse<null>>(`/agricola/${id}`),
 
   resumen: () =>
     api.get<ApiResponse<{ total_dia: number; total_mes: number; cultivos: number }>>(
-      '/agricola/resumen.php'
+      '/agricola/resumen'
     ),
 }
 
-// ============================================
-// Pesaje
-// ============================================
+// ── Pesaje ────────────────────────────────────────────────────
 export const pesajeService = {
   listar: (params?: PaginationParams) =>
-    api.get<ApiResponse<Pesaje[]>>('/pesaje/listar.php', { params }),
+    api.get<ApiResponse<Pesaje[]>>('/pesaje', { params }),
 
   obtener: (id: number) =>
-    api.get<ApiResponse<Pesaje>>(`/pesaje/obtener.php?id=${id}`),
+    api.get<ApiResponse<Pesaje>>(`/pesaje/${id}`),
 
-  crear: (data: Omit<Pesaje, 'id'>) =>
-    api.post<ApiResponse<Pesaje>>('/pesaje/crear.php', data),
+  crear: (data: Omit<Pesaje, 'id' | 'created_at'>) =>
+    api.post<ApiResponse<Pesaje>>('/pesaje', data),
 
   actualizar: (id: number, data: Partial<Pesaje>) =>
-    api.put<ApiResponse<Pesaje>>('/pesaje/actualizar.php', { id, ...data }),
+    api.patch<ApiResponse<Pesaje>>(`/pesaje/${id}`, data),
 
   eliminar: (id: number) =>
-    api.delete<ApiResponse<null>>(`/pesaje/eliminar.php?id=${id}`),
+    api.delete<ApiResponse<null>>(`/pesaje/${id}`),
 
   resumen: () =>
     api.get<ApiResponse<{ pesajes_hoy: number; peso_promedio: number; total_mes: number }>>(
-      '/pesaje/resumen.php'
+      '/pesaje/resumen'
     ),
 }
