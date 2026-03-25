@@ -14,15 +14,15 @@ export default function Topbar({ onMenuToggle }: Props) {
   const { empresas, empresaActual, setEmpresaActual } = useEmpresa()
   const navigate = useNavigate()
 
-  const [menuOpen,    setMenuOpen]    = useState(false)
-  const [notiOpen,    setNotiOpen]    = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [notiOpen, setNotiOpen] = useState(false)
   const [empresaOpen, setEmpresaOpen] = useState(false)
 
   function handleLogout() { logout(); navigate('/login') }
 
-  const initials     = user?.nombre ? user.nombre.split(' ').map(n => n[0]).slice(0,2).join('').toUpperCase() : 'U'
-  const accentColor  = empresaActual?.color ?? 'var(--color-primary)'
-  const empresaInic  = empresaActual ? getIniciales(empresaActual.nombre) : '?'
+  const initials = user?.nombre ? user.nombre.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() : 'U'
+  const accentColor = empresaActual?.color ?? 'var(--color-primary)'
+  const empresaInic = empresaActual ? getIniciales(empresaActual.nombre) : '?'
 
   return (
     <header className={styles.topbar}>
@@ -113,7 +113,7 @@ export default function Topbar({ onMenuToggle }: Props) {
             {/* Nombre y rol — ocultos en móvil */}
             <div className={styles.userInfo}>
               <span className={styles.userName}>{user?.nombre ?? 'Usuario'}</span>
-              <span className={styles.userRole}>{user?.rol ?? 'operador'}</span>
+              <span className={styles.userRole}>{empresaActual?.rol ?? 'operador'}</span>
             </div>
             <ChevronDown size={14} className={styles.chevron} />
           </button>
