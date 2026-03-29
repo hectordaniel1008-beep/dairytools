@@ -5,25 +5,25 @@ import styles from '../ModulePage.module.css'
 import mStyles from '../ModalForm.module.css'
 
 const mockData = [
-  { id: 1, fecha: '2025-03-16', animal_nombre: 'Animal #47', peso_kg: 512, tipo: 'bovino',  operador: 'Pedro Sánchez' },
-  { id: 2, fecha: '2025-03-16', animal_nombre: 'Animal #22', peso_kg: 498, tipo: 'bovino',  operador: 'Pedro Sánchez' },
-  { id: 3, fecha: '2025-03-16', animal_nombre: 'Animal #5',  peso_kg: 89,  tipo: 'porcino', operador: 'Ana Martínez' },
-  { id: 4, fecha: '2025-03-15', animal_nombre: 'Animal #31', peso_kg: 475, tipo: 'bovino',  operador: 'Pedro Sánchez' },
-  { id: 5, fecha: '2025-03-15', animal_nombre: 'Animal #12', peso_kg: 62,  tipo: 'ovino',   operador: 'Ana Martínez' },
+  { id: 1, fecha: '2025-03-16', animal_nombre: 'Animal #47', peso_kg: 512, tipo: 'bovino', operador: 'Pedro Sánchez' },
+  { id: 2, fecha: '2025-03-16', animal_nombre: 'Animal #22', peso_kg: 498, tipo: 'bovino', operador: 'Pedro Sánchez' },
+  { id: 3, fecha: '2025-03-16', animal_nombre: 'Animal #5', peso_kg: 89, tipo: 'porcino', operador: 'Ana Martínez' },
+  { id: 4, fecha: '2025-03-15', animal_nombre: 'Animal #31', peso_kg: 475, tipo: 'bovino', operador: 'Pedro Sánchez' },
+  { id: 5, fecha: '2025-03-15', animal_nombre: 'Animal #12', peso_kg: 62, tipo: 'ovino', operador: 'Ana Martínez' },
 ]
 
 const tipoColors: Record<string, { bg: string; text: string }> = {
-  bovino:  { bg: 'var(--color-primary-bg)',   text: 'var(--color-primary)' },
-  porcino: { bg: '#fff6e6',                   text: 'var(--color-warning)' },
-  ovino:   { bg: 'var(--color-secondary-bg)', text: 'var(--color-secondary)' },
+  bovino: { bg: 'var(--color-primary-bg)', text: 'var(--color-primary)' },
+  porcino: { bg: '#fff6e6', text: 'var(--color-warning)' },
+  ovino: { bg: 'var(--color-secondary-bg)', text: 'var(--color-secondary)' },
 }
 
 const FORM_INIT = { fecha: '', animal_nombre: '', peso_kg: '', tipo: 'bovino', operador: '', observaciones: '' }
 
 export default function PesajePage() {
-  const [busqueda, setBusqueda]   = useState('')
+  const [busqueda, setBusqueda] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
-  const [form, setForm]           = useState(FORM_INIT)
+  const [form, setForm] = useState(FORM_INIT)
   const [registros, setRegistros] = useState(mockData)
 
   const filtrado = registros.filter(r =>
@@ -85,8 +85,8 @@ export default function PesajePage() {
               <tr key={row.id}>
                 <td>{row.fecha}</td>
                 <td>{row.animal_nombre}</td>
-                <td><span className={styles.pill} style={{ background:'#fff6e6', color:'var(--color-warning)' }}>{row.peso_kg} kg</span></td>
-                <td><span className={styles.pill} style={{ background:tipoColors[row.tipo].bg, color:tipoColors[row.tipo].text }}>{row.tipo.charAt(0).toUpperCase()+row.tipo.slice(1)}</span></td>
+                <td><span className={styles.pill} style={{ background: '#fff6e6', color: 'var(--color-warning)' }}>{row.peso_kg} kg</span></td>
+                <td><span className={styles.pill} style={{ background: tipoColors[row.tipo].bg, color: tipoColors[row.tipo].text }}>{row.tipo.charAt(0).toUpperCase() + row.tipo.slice(1)}</span></td>
                 <td>{row.operador}</td>
                 <td><div className={styles.rowActions}>
                   <button className={styles.actionBtn}>Editar</button>
@@ -104,11 +104,11 @@ export default function PesajePage() {
           <div className={mStyles.row2}>
             <div className={mStyles.field}>
               <label className={mStyles.label}>Fecha *</label>
-              <input type="date" name="fecha" className={mStyles.input} value={form.fecha} onChange={handleChange} />
+              <input type="date" name="fecha" className={mStyles.input} value={form.fecha} onChange={handleChange} title='Fecha' />
             </div>
             <div className={mStyles.field}>
               <label className={mStyles.label}>Tipo *</label>
-              <select name="tipo" className={mStyles.input} value={form.tipo} onChange={handleChange}>
+              <select name="tipo" className={mStyles.input} value={form.tipo} onChange={handleChange} title='Tipo'>
                 <option value="bovino">Bovino</option>
                 <option value="porcino">Porcino</option>
                 <option value="ovino">Ovino</option>
@@ -134,8 +134,8 @@ export default function PesajePage() {
             <textarea name="observaciones" className={mStyles.textarea} rows={3} placeholder="Notas…" value={form.observaciones} onChange={handleChange} />
           </div>
           <div className={mStyles.actions}>
-            <button className={mStyles.btnCancel} onClick={() => setModalOpen(false)}><X size={15}/> Cancelar</button>
-            <button className={mStyles.btnSave} style={{ background:'#e69519' }} onClick={handleGuardar}><Save size={15}/> Guardar</button>
+            <button className={mStyles.btnCancel} onClick={() => setModalOpen(false)}><X size={15} /> Cancelar</button>
+            <button className={mStyles.btnSave} style={{ background: '#e69519' }} onClick={handleGuardar}><Save size={15} /> Guardar</button>
           </div>
         </div>
       </Modal>

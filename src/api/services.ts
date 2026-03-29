@@ -7,7 +7,16 @@ import type {
   ProduccionAgricola,
   Pesaje,
   PaginationParams,
+  Empresa,
 } from '../types'
+
+export interface EmpresaPayload {
+  nombre: string
+  clave: string
+  color?: string
+  estatus?: boolean
+  logoUrl?: string
+}
 
 // ── Auth ─────────────────────────────────────────────────────
 export const authService = {
@@ -82,7 +91,21 @@ export const agricolaService = {
     ),
 }
 
-// ── Pesaje ────────────────────────────────────────────────────
+// ── Empresas ───────────────────────────────────────────────────
+export const empresasService = {
+  listar: () => api.get<ApiResponse<Empresa[]>>('/empresas'),
+
+  obtener: (id: number) => api.get<ApiResponse<Empresa>>(`/empresas/${id}`),
+
+  crear: (data: EmpresaPayload) => api.post<ApiResponse<Empresa>>('/empresas', data),
+
+  actualizar: (id: number, data: Partial<EmpresaPayload>) =>
+    api.patch<ApiResponse<Empresa>>(`/empresas/${id}`, data),
+
+  eliminar: (id: number) => api.delete<ApiResponse<null>>(`/empresas/${id}`),
+}
+
+// ── Pesaje ───────────────────────────────────────────────────
 export const pesajeService = {
   listar: (params?: PaginationParams) =>
     api.get<ApiResponse<Pesaje[]>>('/pesaje', { params }),

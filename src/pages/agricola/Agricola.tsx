@@ -5,10 +5,10 @@ import styles from '../ModulePage.module.css'
 import mStyles from '../ModalForm.module.css'
 
 const mockData = [
-  { id: 1, fecha: '2025-03-16', cultivo: 'Maíz',  parcela: 'B3', cantidad_kg: 200, calidad: 'A', responsable: 'Juan López' },
+  { id: 1, fecha: '2025-03-16', cultivo: 'Maíz', parcela: 'B3', cantidad_kg: 200, calidad: 'A', responsable: 'Juan López' },
   { id: 2, fecha: '2025-03-16', cultivo: 'Trigo', parcela: 'A1', cantidad_kg: 350, calidad: 'B', responsable: 'María García' },
   { id: 3, fecha: '2025-03-15', cultivo: 'Sorgo', parcela: 'C2', cantidad_kg: 180, calidad: 'A', responsable: 'Carlos Ruiz' },
-  { id: 4, fecha: '2025-03-15', cultivo: 'Maíz',  parcela: 'B1', cantidad_kg: 290, calidad: 'A', responsable: 'Juan López' },
+  { id: 4, fecha: '2025-03-15', cultivo: 'Maíz', parcela: 'B1', cantidad_kg: 290, calidad: 'A', responsable: 'Juan López' },
 ]
 
 const calidadColors: Record<string, string> = {
@@ -18,9 +18,9 @@ const calidadColors: Record<string, string> = {
 const FORM_INIT = { fecha: '', cultivo: '', parcela: '', cantidad_kg: '', calidad: 'A', responsable: '', observaciones: '' }
 
 export default function AgricolaPage() {
-  const [busqueda, setBusqueda]   = useState('')
+  const [busqueda, setBusqueda] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
-  const [form, setForm]           = useState(FORM_INIT)
+  const [form, setForm] = useState(FORM_INIT)
   const [registros, setRegistros] = useState(mockData)
 
   const filtrado = registros.filter(r =>
@@ -84,8 +84,8 @@ export default function AgricolaPage() {
                 <td>{row.fecha}</td>
                 <td>{row.cultivo}</td>
                 <td>{row.parcela}</td>
-                <td><span className={styles.pill} style={{ background:'var(--color-secondary-bg)', color:'var(--color-secondary)' }}>{row.cantidad_kg} kg</span></td>
-                <td><span className={styles.pill} style={{ background:`${calidadColors[row.calidad]}22`, color:calidadColors[row.calidad] }}>Calidad {row.calidad}</span></td>
+                <td><span className={styles.pill} style={{ background: 'var(--color-secondary-bg)', color: 'var(--color-secondary)' }}>{row.cantidad_kg} kg</span></td>
+                <td><span className={styles.pill} style={{ background: `${calidadColors[row.calidad]}22`, color: calidadColors[row.calidad] }}>Calidad {row.calidad}</span></td>
                 <td>{row.responsable}</td>
                 <td><div className={styles.rowActions}>
                   <button className={styles.actionBtn}>Editar</button>
@@ -103,11 +103,11 @@ export default function AgricolaPage() {
           <div className={mStyles.row2}>
             <div className={mStyles.field}>
               <label className={mStyles.label}>Fecha *</label>
-              <input type="date" name="fecha" className={mStyles.input} value={form.fecha} onChange={handleChange} />
+              <input type="date" name="fecha" className={mStyles.input} value={form.fecha} onChange={handleChange} title='Fecha' />
             </div>
             <div className={mStyles.field}>
               <label className={mStyles.label}>Calidad</label>
-              <select name="calidad" className={mStyles.input} value={form.calidad} onChange={handleChange}>
+              <select name="calidad" className={mStyles.input} value={form.calidad} onChange={handleChange} title='Calidad'>
                 <option value="A">A — Alta</option>
                 <option value="B">B — Media</option>
                 <option value="C">C — Baja</option>
@@ -139,8 +139,8 @@ export default function AgricolaPage() {
             <textarea name="observaciones" className={mStyles.textarea} rows={3} placeholder="Notas…" value={form.observaciones} onChange={handleChange} />
           </div>
           <div className={mStyles.actions}>
-            <button className={mStyles.btnCancel} onClick={() => setModalOpen(false)}><X size={15}/> Cancelar</button>
-            <button className={mStyles.btnSave} style={{ background:'var(--color-secondary)' }} onClick={handleGuardar}><Save size={15}/> Guardar</button>
+            <button className={mStyles.btnCancel} onClick={() => setModalOpen(false)}><X size={15} /> Cancelar</button>
+            <button className={mStyles.btnSave} style={{ background: 'var(--color-secondary)' }} onClick={handleGuardar}><Save size={15} /> Guardar</button>
           </div>
         </div>
       </Modal>

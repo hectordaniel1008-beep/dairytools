@@ -5,22 +5,23 @@ import ProtectedRoute from './components/ui/ProtectedRoute'
 import AppLayout from './components/layout/AppLayout'
 
 // Auth
-import LoginPage         from './pages/auth/Login'
+import LoginPage from './pages/auth/Login'
 
 // Leche
-import LecheDashboard    from './pages/leche/LecheDashboard'
-import LechePage         from './pages/leche/Leche'
-import LecheMapa         from './pages/leche/LecheMapa'
+import LecheDashboard from './pages/leche/LecheDashboard'
+import LechePage from './pages/leche/Leche'
+import LecheMapa from './pages/leche/LecheMapa'
 
 // Agrícola
 import AgricolaDashboard from './pages/agricola/AgricolaDashboard'
-import AgricolaPage      from './pages/agricola/Agricola'
-import AgricolaMapa      from './pages/agricola/AgricolaMapa'
 
 // Pesaje
-import PesajeDashboard   from './pages/pesaje/PesajeDashboard'
-import PesajePage        from './pages/pesaje/Pesaje'
-import PesajeMapa        from './pages/pesaje/PesajeMapa'
+import PesajeDashboard from './pages/pesaje/PesajeDashboard'
+
+// Configuración
+import ConfiguracionPage from './pages/configuracion/Configuracion'
+import UsuariosPage from './pages/configuracion/Usuarios'
+import EmpresasPage from './pages/configuracion/Empresas'
 
 export default function App() {
   return (
@@ -44,29 +45,29 @@ export default function App() {
 
               {/* Módulo: Producción de Leche */}
               <Route path="leche">
-                <Route index           element={<Navigate to="dashboard" replace />} />
+                <Route index element={<Navigate to="dashboard" replace />} />
                 <Route path="dashboard" element={<LecheDashboard />} />
                 <Route path="registros" element={<LechePage />} />
-                <Route path="mapa"      element={<LecheMapa />} />
+                <Route path="mapa" element={<LecheMapa />} />
               </Route>
 
               {/* Módulo: Producción Agrícola */}
               <Route path="agricola">
-                <Route index           element={<Navigate to="dashboard" replace />} />
+                <Route index element={<Navigate to="dashboard" replace />} />
                 <Route path="dashboard" element={<AgricolaDashboard />} />
-                <Route path="registros" element={<AgricolaPage />} />
-                <Route path="mapa"      element={<AgricolaMapa />} />
               </Route>
 
               {/* Módulo: Pesaje */}
               <Route path="pesaje">
-                <Route index           element={<Navigate to="dashboard" replace />} />
+                <Route index element={<Navigate to="dashboard" replace />} />
                 <Route path="dashboard" element={<PesajeDashboard />} />
-                <Route path="registros" element={<PesajePage />} />
-                <Route path="mapa"      element={<PesajeMapa />} />
               </Route>
 
-              <Route path="configuracion" element={<div style={{ padding: 24 }}>Configuración — próximamente</div>} />
+              <Route path="configuracion">
+                <Route index element={<ConfiguracionPage />} />
+                <Route path="usuarios" element={<UsuariosPage />} />
+                <Route path="empresas" element={<EmpresasPage />} />
+              </Route>
             </Route>
 
             {/* Fallback */}

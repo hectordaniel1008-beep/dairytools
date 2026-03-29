@@ -75,7 +75,8 @@ export default function Topbar({ onMenuToggle }: Props) {
         {/* Notificaciones */}
         <div className={styles.notifWrap}>
           <button className={styles.iconBtn}
-            onClick={() => { setNotiOpen(!notiOpen); setMenuOpen(false); setEmpresaOpen(false) }}>
+            onClick={() => { setNotiOpen(!notiOpen); setMenuOpen(false); setEmpresaOpen(false) }}
+            aria-label="Notificaciones">
             <Bell size={18} />
             <span className={styles.notifDot} />
           </button>
@@ -84,7 +85,7 @@ export default function Topbar({ onMenuToggle }: Props) {
             <div className={styles.dropdown}>
               <div className={styles.dropdownHeader}>
                 <span>Notificaciones</span>
-                <button className={styles.markAll}>Marcar todas leídas</button>
+                <button className={styles.markAll} aria-label="Marcar todas las notificaciones como leídas">Marcar todas leídas</button>
               </div>
               {[
                 { id: 1, msg: 'Nuevo registro de leche ingresado', time: 'Hace 5 min', tipo: 'info' },
@@ -108,7 +109,8 @@ export default function Topbar({ onMenuToggle }: Props) {
         {/* Usuario */}
         <div className={styles.userWrap}>
           <button className={styles.userBtn}
-            onClick={() => { setMenuOpen(!menuOpen); setNotiOpen(false); setEmpresaOpen(false) }}>
+            onClick={() => { setMenuOpen(!menuOpen); setNotiOpen(false); setEmpresaOpen(false) }}
+            aria-label="Menú de usuario">
             <div className={styles.avatar}>{initials}</div>
             {/* Nombre y rol — ocultos en móvil */}
             <div className={styles.userInfo}>

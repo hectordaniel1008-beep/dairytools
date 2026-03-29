@@ -1,20 +1,56 @@
+import { useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import { Milk, Sprout, Scale, Settings, X } from 'lucide-react'
+import { Milk, Sprout, Scale, Settings, X, ChevronRight } from 'lucide-react'
 import styles from './Sidebar.module.css'
+
+interface SubItem {
+  label: string
+  to: string
+}
 
 interface NavModule {
   label: string
   icon: React.ReactNode
   base: string
-  dashboardTo: string
-  registrosTo: string
-  mapaTo: string
+  subItems: SubItem[]
 }
 
 const navModules: NavModule[] = [
-  { label: 'Producción de Leche', icon: <Milk size={18} />,   base: '/leche',   dashboardTo: '/leche/dashboard',   registrosTo: '/leche/registros',   mapaTo: '/leche/mapa' },
-  { label: 'Producción Agrícola', icon: <Sprout size={18} />, base: '/agricola', dashboardTo: '/agricola/dashboard', registrosTo: '/agricola/registros', mapaTo: '/agricola/mapa' },
-  { label: 'Pesaje',              icon: <Scale size={18} />,  base: '/pesaje',   dashboardTo: '/pesaje/dashboard',   registrosTo: '/pesaje/registros',   mapaTo: '/pesaje/mapa' },
+  {
+    label: 'Producción de Leche',
+    icon: <Milk size={18} />,
+    base: '/leche',
+    subItems: [
+      { label: 'Dashboard', to: '/leche/dashboard' },
+      { label: 'Registros', to: '/leche/registros' },
+      { label: 'Mapa', to: '/leche/mapa' },
+    ],
+  },
+  {
+    label: 'Producción Agrícola',
+    icon: <Sprout size={18} />,
+    base: '/agricola',
+    subItems: [
+      { label: 'Dashboard', to: '/agricola/dashboard' },
+    ],
+  },
+  {
+    label: 'Pesaje',
+    icon: <Scale size={18} />,
+    base: '/pesaje',
+    subItems: [
+      { label: 'Dashboard', to: '/pesaje/dashboard' },
+    ],
+  },
+  {
+    label: 'Configuración',
+    icon: <Settings size={18} />,
+    base: '/configuracion',
+    subItems: [
+      { label: 'Usuarios', to: '/configuracion/usuarios' },
+      { label: 'Empresas', to: '/configuracion/empresas' },
+    ],
+  },
 ]
 
 interface Props {
@@ -23,6 +59,18 @@ interface Props {
 
 export default function Sidebar({ onClose }: Props) {
   const location = useLocation()
+
+  const [expanded, setExpanded] = useState<Record<string, boolean>>(() => {
+    const init: Record<string, boolean> = {}
+    navModules.forEach((m) => {
+      init[m.base] = location.pathname.startsWith(m.base)
+    })
+    return init
+  })
+
+  function toggleModule(base: string) {
+    setExpanded((prev) => ({ ...prev, [base]: !prev[base] }))
+  }
 
   return (
     <aside className={styles.sidebar}>
@@ -43,24 +91,29 @@ export default function Sidebar({ onClose }: Props) {
       <nav className={styles.nav}>
         {navModules.map((mod) => {
           const isModuleActive = location.pathname.startsWith(mod.base)
+          const isOpen = expanded[mod.base] ?? false
           return (
             <div key={mod.base}>
-              <NavLink
-                to={mod.dashboardTo}
-                className={() => `${styles.navItem} ${isModuleActive ? styles.groupActive : ''}`}
+              <button
+                className={`${styles.navItem} ${isModuleActive ? styles.groupActive : ''}`}
+                onClick={() => toggleModule(mod.base)}
               >
                 <span className={styles.navIcon}>{mod.icon}</span>
                 <span className={styles.navText}>{mod.label}</span>
-              </NavLink>
+                <ChevronRight size={14} className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`} />
+              </button>
 
-              {isModuleActive && (
+              {isOpen && (
                 <div className={styles.subItems}>
-                  <NavLink to={mod.registrosTo} className={({ isActive }) => `${styles.subItem} ${isActive ? styles.subActive : ''}`}>
-                    Registros
-                  </NavLink>
-                  <NavLink to={mod.mapaTo} className={({ isActive }) => `${styles.subItem} ${isActive ? styles.subActive : ''}`}>
-                    Mapa
-                  </NavLink>
+                  {mod.subItems.map((sub) => (
+                    <NavLink
+                      key={sub.to}
+                      to={sub.to}
+                      className={({ isActive }) => `${styles.subItem} ${isActive ? styles.subActive : ''}`}
+                    >
+                      {sub.label}
+                    </NavLink>
+                  ))}
                 </div>
               )}
             </div>
@@ -69,13 +122,6 @@ export default function Sidebar({ onClose }: Props) {
       </nav>
 
       <div className={styles.spacer} />
-
-      <div className={styles.navBottom}>
-        <NavLink to="/configuracion" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
-          <span className={styles.navIcon}><Settings size={18} /></span>
-          <span className={styles.navText}>Configuración</span>
-        </NavLink>
-      </div>
 
     </aside>
   )

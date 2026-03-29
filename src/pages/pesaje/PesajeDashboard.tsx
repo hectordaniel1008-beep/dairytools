@@ -93,9 +93,6 @@ export default function PesajeDashboard() {
               </div>
             ))}
           </div>
-          <a href="/pesaje/registros" className={modStyles.verTodo}>
-            Ver todos los registros →
-          </a>
         </section>
       </div>
     </div>

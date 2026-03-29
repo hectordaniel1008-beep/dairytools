@@ -36,7 +36,7 @@ export default function Modal({ open, onClose, title, children, width = 520 }: P
         {/* Header */}
         <div className={styles.header}>
           <h3 className={styles.title}>{title}</h3>
-          <button className={styles.closeBtn} onClick={onClose}>
+          <button className={styles.closeBtn} onClick={onClose} title='Cerrar'>
             <X size={18} />
           </button>
         </div>

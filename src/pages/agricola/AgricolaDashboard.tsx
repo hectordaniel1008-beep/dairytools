@@ -85,9 +85,6 @@ export default function AgricolaDashboard() {
               </div>
             ))}
           </div>
-          <a href="/agricola/registros" className={modStyles.verTodo}>
-            Ver todos los registros →
-          </a>
         </section>
       </div>
     </div>
