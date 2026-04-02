@@ -8,7 +8,8 @@ import type {
   Pesaje,
   PaginationParams,
   Empresa,
-} from '../types'
+  UsuarioCatalogo,
+} from '@/types'
 
 export interface EmpresaPayload {
   nombre: string
@@ -17,6 +18,18 @@ export interface EmpresaPayload {
   estatus?: boolean
   logoUrl?: string
 }
+
+export interface UsuarioPayload {
+  nombre: string
+  email: string
+  password: string
+  es_superadmin?: boolean
+  estatus?: boolean
+}
+
+export type UsuarioActualizarPayload = Partial<
+  Omit<UsuarioPayload, 'password'> & { password?: string }
+>
 
 // ── Auth ─────────────────────────────────────────────────────
 export const authService = {
@@ -103,6 +116,21 @@ export const empresasService = {
     api.patch<ApiResponse<Empresa>>(`/empresas/${id}`, data),
 
   eliminar: (id: number) => api.delete<ApiResponse<null>>(`/empresas/${id}`),
+}
+
+// ── Usuarios (catálogo) ──────────────────────────────────────
+export const usuariosService = {
+  listar: () => api.get<ApiResponse<UsuarioCatalogo[]>>('/usuarios'),
+
+  obtener: (id: number) => api.get<ApiResponse<UsuarioCatalogo>>(`/usuarios/${id}`),
+
+  crear: (data: UsuarioPayload) =>
+    api.post<ApiResponse<UsuarioCatalogo>>('/usuarios', data),
+
+  actualizar: (id: number, data: UsuarioActualizarPayload) =>
+    api.patch<ApiResponse<UsuarioCatalogo>>(`/usuarios/${id}`, data),
+
+  eliminar: (id: number) => api.delete<ApiResponse<null>>(`/usuarios/${id}`),
 }
 
 // ── Pesaje ───────────────────────────────────────────────────

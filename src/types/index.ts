@@ -20,6 +20,15 @@ export interface User {
   es_superadmin: boolean
 }
 
+/** Catálogo de usuarios (configuración) */
+export interface UsuarioCatalogo {
+  id:            number
+  nombre:        string
+  email:         string
+  es_superadmin: boolean
+  estatus:       boolean
+}
+
 // ── Estado de autenticación ──────────────────────────────────
 export interface AuthState {
   user:             User | null

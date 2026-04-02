@@ -241,8 +241,10 @@ export default function EmpresasPage() {
                                                 aria-label={empresa.color ? `Color ${empresa.color}` : 'Sin color'}
                                             />
                                         </td>
-                                        <td className={styles.td} data-label="ESTATUS">
-                                            {empresa.estatus ? 'Activo' : 'Inactivo'}
+                                        <td className={styles.td} data-label="Estatus">
+                                            <span className={styles.roleBadge}>
+                                                {empresa.estatus ? 'Activo' : 'Inactivo'}
+                                            </span>
                                         </td>
                                         <td className={styles.actionCell} data-label="Acciones">
                                             <div className={styles.actions}>
