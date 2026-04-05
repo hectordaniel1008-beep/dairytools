@@ -11,11 +11,13 @@ interface EmpresaRow {
     clave: string
     color?: string
     estatus: boolean
+    rfc: string
 }
 
 const FORM_INIT = {
     nombre: '',
     clave: '',
+    rfc: '',
     color: '#1e5a96',
     estatus: true,
 }
@@ -68,9 +70,37 @@ export default function EmpresasPage() {
         return COLOR_PALETTE[Math.floor(Math.random() * COLOR_PALETTE.length)]
     }
 
+    function generarClave(nombre: string, empresasExistentes: EmpresaRow[]): string {
+        const primerasLetras = nombre.trim().substring(0, 3).toUpperCase()
+
+        // Filtrar empresas que tienen la misma base
+        const empresasMismaBase = empresasExistentes.filter(emp =>
+            emp.clave.startsWith(primerasLetras + '-')
+        )
+
+        // Obtener el consecutivo más alto
+        let maxConsecutivo = 0
+        empresasMismaBase.forEach(emp => {
+            const match = emp.clave.match(/^([A-Z]{3})-(\d+)$/)
+
+            if (match) {
+                const consecutivo = parseInt(match[2])
+                if (consecutivo > maxConsecutivo) {
+                    maxConsecutivo = consecutivo
+                }
+            }
+        })
+
+        const nuevoConsecutivo = maxConsecutivo + 1
+        return `${primerasLetras}-${nuevoConsecutivo.toString().padStart(3, '0')}`
+    }
+
     function abrirModalNueva() {
         setSelectedEmpresa(null)
-        setForm(FORM_INIT)
+        setForm({
+            ...FORM_INIT,
+            clave: generarClave('', empresas)
+        })
         setError('')
         setModalOpen(true)
     }
@@ -82,6 +112,7 @@ export default function EmpresasPage() {
             clave: empresa.clave,
             color: empresa.color ?? generarColorAleatorio(),
             estatus: empresa.estatus,
+            rfc: empresa.rfc,
         })
         setError('')
         setModalOpen(true)
@@ -107,15 +138,35 @@ export default function EmpresasPage() {
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
         const { name, value } = e.target
-        setForm((prev) => ({
-            ...prev,
-            [name]: name === 'estatus' ? value === 'true' : value,
-        }))
+        setForm((prev) => {
+            const newForm = {
+                ...prev,
+                [name]: name === 'estatus' ? value === 'true' : value,
+            }
+
+            // Generar clave automáticamente cuando cambia el nombre en modo creación
+            if (name === 'nombre' && !selectedEmpresa) {
+                newForm.clave = generarClave(value, empresas)
+            }
+
+            return newForm
+        })
     }
 
     async function handleGuardar() {
-        if (!form.nombre.trim() || !form.clave.trim()) {
-            setError('Nombre y clave son obligatorios')
+        if (!form.nombre.trim() || !form.rfc.trim()) {
+            setError('Nombre y RFC son obligatorios')
+            return
+        }
+
+        // Validar RFC repetido
+        const rfcExistente = empresas.find(emp =>
+            emp.rfc.toLowerCase() === form.rfc.trim().toLowerCase() &&
+            emp.id !== selectedEmpresa?.id
+        )
+
+        if (rfcExistente) {
+            setError('El RFC ya está registrado en otra empresa')
             return
         }
 
@@ -128,6 +179,7 @@ export default function EmpresasPage() {
                     nombre: form.nombre.trim(),
                     clave: form.clave.trim(),
                     estatus: form.estatus,
+                    rfc: form.rfc.trim(),
                 })
             } else {
                 await empresasService.crear({
@@ -135,6 +187,7 @@ export default function EmpresasPage() {
                     clave: form.clave.trim(),
                     color: generarColorAleatorio(),
                     estatus: form.estatus,
+                    rfc: form.rfc.trim(),
                 })
             }
 
@@ -217,6 +270,7 @@ export default function EmpresasPage() {
                             <tr>
                                 <th className={styles.th}>Nombre</th>
                                 <th className={styles.th}>Clave</th>
+                                <th className={styles.th}>Rfc</th>
                                 <th className={styles.th}>Color</th>
                                 <th className={styles.th}>ESTATUS</th>
                                 <th className={styles.th}>Acciones</th>
@@ -234,6 +288,7 @@ export default function EmpresasPage() {
                                     <tr key={empresa.id} className={styles.rowHover}>
                                         <td className={styles.td} data-label="Nombre">{empresa.nombre}</td>
                                         <td className={`${styles.td} ${styles.cellMuted}`} data-label="Clave">{empresa.clave}</td>
+                                        <td className={`${styles.td} ${styles.cellMuted}`} data-label="Rfc">{empresa.rfc}</td>
                                         <td className={styles.td} data-label="Color">
                                             <span
                                                 className={styles.colorBadge}
@@ -246,6 +301,7 @@ export default function EmpresasPage() {
                                                 {empresa.estatus ? 'Activo' : 'Inactivo'}
                                             </span>
                                         </td>
+
                                         <td className={styles.actionCell} data-label="Acciones">
                                             <div className={styles.actions}>
                                                 <button
@@ -288,6 +344,19 @@ export default function EmpresasPage() {
             >
                 <div className={mStyles.form}>
                     <div className={mStyles.field}>
+                        <label className={mStyles.label}>Clave</label>
+                        <input
+                            name="clave"
+                            value={form.clave}
+                            onChange={handleChange}
+                            className={mStyles.input}
+                            placeholder="Clave generada automáticamente"
+                            disabled
+                            style={{ backgroundColor: '#f5f5f5', cursor: 'not-allowed' }}
+                        />
+                    </div>
+
+                    <div className={mStyles.field}>
                         <label className={mStyles.label}>Nombre *</label>
                         <input
                             name="nombre"
@@ -295,19 +364,21 @@ export default function EmpresasPage() {
                             onChange={handleChange}
                             className={mStyles.input}
                             placeholder="Nombre de la empresa"
+                            autoFocus
                         />
                     </div>
 
                     <div className={mStyles.field}>
-                        <label className={mStyles.label}>Clave *</label>
+                        <label className={mStyles.label}>Rfc *</label>
                         <input
-                            name="clave"
-                            value={form.clave}
+                            name="rfc"
+                            value={form.rfc}
                             onChange={handleChange}
                             className={mStyles.input}
-                            placeholder="Clave de la empresa"
+                            placeholder="Rfc de la empresa"
                         />
                     </div>
+
 
                     <div className={mStyles.field}>
                         <label htmlFor="estatus" className={mStyles.label}>Estatus *</label>

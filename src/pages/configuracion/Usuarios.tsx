@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Users, Plus, Edit, Trash2, Search, Save, X } from 'lucide-react'
+import { Users, Plus, Edit, Trash2, Search, Save, X, Building2 } from 'lucide-react'
 import Modal from '../../components/ui/Modal'
 import styles from './Usuarios.module.css'
 import mStyles from '../ModalForm.module.css'
+import panelStyles from './SidePanel.module.css'
 import { usuariosService } from '../../api/services'
+import { empresasService } from '../../api/services'
 
 interface UsuarioRow {
     id: number
@@ -11,6 +13,20 @@ interface UsuarioRow {
     email: string
     es_superadmin: boolean
     estatus: boolean
+}
+
+interface EmpresaRow {
+    id: number
+    nombre: string
+    clave: string
+    color?: string
+    estatus: boolean
+    rfc: string
+}
+
+interface UsuarioEmpresa {
+    empresaId: number
+    esDefault: boolean
 }
 
 const FORM_INIT = {
@@ -36,9 +52,15 @@ export default function UsuariosPage() {
     const [isSaving, setIsSaving] = useState(false)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
+    const [panelOpen, setPanelOpen] = useState(false)
+    const [empresas, setEmpresas] = useState<EmpresaRow[]>([])
+    const [usuarioEmpresas, setUsuarioEmpresas] = useState<UsuarioEmpresa[]>([])
+    const [selectedEmpresaDefault, setSelectedEmpresaDefault] = useState<number | null>(null)
+    const [loadingEmpresas, setLoadingEmpresas] = useState(false)
 
     useEffect(() => {
         listarUsuarios()
+        listarEmpresas()
     }, [])
 
     function abrirModalNuevo() {
@@ -94,6 +116,28 @@ export default function UsuariosPage() {
     async function handleGuardar() {
         if (!form.nombre.trim() || !form.email.trim()) {
             setError('Nombre y correo son obligatorios')
+            return
+        }
+
+        // Validar nombre duplicado
+        const nombreExistente = usuarios.find(u =>
+            u.nombre.toLowerCase() === form.nombre.trim().toLowerCase() &&
+            u.id !== selectedUsuario?.id
+        )
+
+        if (nombreExistente) {
+            setError('El nombre de usuario ya está registrado')
+            return
+        }
+
+        // Validar correo duplicado
+        const emailExistente = usuarios.find(u =>
+            u.email.toLowerCase() === form.email.trim().toLowerCase() &&
+            u.id !== selectedUsuario?.id
+        )
+
+        if (emailExistente) {
+            setError('El correo electrónico ya está registrado')
             return
         }
 
@@ -177,6 +221,124 @@ export default function UsuariosPage() {
         setUsuarioParaEliminar(null)
     }
 
+    async function listarEmpresas() {
+        try {
+            const response = await empresasService.listar()
+            const empresasData = (response.data?.data ?? []).map((empresa: any) => ({
+                ...empresa,
+                estatus: empresa.estatus ?? true,
+            })) as EmpresaRow[]
+            setEmpresas(empresasData)
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
+    function abrirPanelAsignarEmpresas(usuario: UsuarioRow) {
+        setSelectedUsuario(usuario)
+        setPanelOpen(true)
+        setError('')
+        // Aquí cargaremos las empresas asignadas al usuario
+        cargarEmpresasUsuario(usuario.id)
+    }
+
+    async function cargarEmpresasUsuario(usuarioId: number) {
+        setLoadingEmpresas(true)
+        try {
+            const response = await usuariosService.obtenerEmpresas(usuarioId)
+            setUsuarioEmpresas(response.data?.data ?? [])
+
+            // Establecer la empresa por defecto seleccionada
+            const defaultEmpresa = response.data?.data?.find((ue: any) => ue.esDefault)
+            if (defaultEmpresa) {
+                setSelectedEmpresaDefault(defaultEmpresa.empresaId)
+            }
+        } catch (err) {
+            console.error(err)
+            setError('No se pudo cargar las empresas del usuario')
+        } finally {
+            setLoadingEmpresas(false)
+        }
+    }
+
+    function handleEmpresaToggle(empresaId: number) {
+        setUsuarioEmpresas(prev => {
+            const existe = prev.find(ue => ue.empresaId === empresaId)
+            if (existe) {
+                // Si intenta deseleccionar y es la última empresa, no permitir
+                if (prev.length === 1) {
+                    setError('No puede deseleccionar la última empresa. El usuario debe tener al menos una empresa asignada.')
+                    return prev
+                }
+                setError('')
+                return prev.filter(ue => ue.empresaId !== empresaId)
+            } else {
+                setError('')
+                return [...prev, { empresaId, esDefault: false }]
+            }
+        })
+    }
+
+    function handleSeleccionarTodas() {
+        const todasAsignadas = empresas.every(empresa =>
+            usuarioEmpresas.some(ue => ue.empresaId === empresa.id)
+        )
+
+        if (todasAsignadas) {
+            // Deseleccionar todas
+            setUsuarioEmpresas([])
+            setSelectedEmpresaDefault(null)
+        } else {
+            // Seleccionar todas
+            const nuevasAsignaciones = empresas.map(empresa => ({
+                empresaId: empresa.id,
+                esDefault: false
+            }))
+            setUsuarioEmpresas(nuevasAsignaciones)
+        }
+    }
+
+    function handleEmpresaDefaultChange(empresaId: number) {
+        setSelectedEmpresaDefault(empresaId)
+        setUsuarioEmpresas(prev =>
+            prev.map(ue => ({
+                ...ue,
+                esDefault: ue.empresaId === empresaId
+            }))
+        )
+    }
+
+    async function handleGuardarAsignacion() {
+        if (!selectedUsuario) return
+
+        // Validar que se seleccione al menos una empresa
+        if (usuarioEmpresas.length === 0) {
+            setError('Debe seleccionar al menos una empresa para el usuario')
+            return
+        }
+
+        setIsSaving(true)
+        setError('')
+
+        try {
+            await usuariosService.actualizarEmpresas(selectedUsuario.id, usuarioEmpresas)
+            setPanelOpen(false)
+            setError('')
+        } catch (err) {
+            console.error(err)
+            setError('No se pudo guardar la asignación de empresas')
+        } finally {
+            setIsSaving(false)
+        }
+    }
+
+    function cerrarPanel() {
+        setPanelOpen(false)
+        setSelectedUsuario(null)
+        setUsuarioEmpresas([])
+        setSelectedEmpresaDefault(null)
+    }
+
     const filtrados = usuarios.filter(
         (u) =>
             u.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
@@ -216,6 +378,7 @@ export default function UsuariosPage() {
                             value={busqueda}
                             onChange={(e) => setBusqueda(e.target.value)}
                             className={styles.searchInput}
+                            autoComplete="off"
                         />
                     </div>
                 </div>
@@ -268,6 +431,13 @@ export default function UsuariosPage() {
                                                     <Edit size={14} />
                                                 </button>
                                                 <button
+                                                    className={styles.actionButton}
+                                                    title="Asignar empresas"
+                                                    onClick={() => abrirPanelAsignarEmpresas(usuario)}
+                                                >
+                                                    <Building2 size={14} />
+                                                </button>
+                                                <button
                                                     className={`${styles.actionButton} ${styles.dangerButton}`}
                                                     title="Eliminar"
                                                     onClick={() => handleEliminar(usuario)}
@@ -308,6 +478,7 @@ export default function UsuariosPage() {
                             className={mStyles.input}
                             placeholder="Nombre completo"
                             autoComplete="name"
+                            autoFocus
                         />
                     </div>
 
@@ -320,7 +491,7 @@ export default function UsuariosPage() {
                             onChange={handleChange}
                             className={mStyles.input}
                             placeholder="correo@ejemplo.com"
-                            autoComplete="email"
+                            autoComplete="off"
                         />
                     </div>
 
@@ -410,6 +581,91 @@ export default function UsuariosPage() {
                     </div>
                 </div>
             </Modal>
+
+            {/* Panel lateral para asignar empresas */}
+            <div className={`${panelStyles.panelOverlay} ${panelOpen ? panelStyles.open : ''}`} onClick={cerrarPanel} />
+            <div className={`${panelStyles.panel} ${panelOpen ? panelStyles.open : ''}`}>
+                <div className={panelStyles.panelHeader}>
+                    <h3 className={panelStyles.panelTitle}>
+                        Asignar empresas a {selectedUsuario?.nombre}
+                    </h3>
+                    <button className={panelStyles.panelClose} onClick={cerrarPanel}>
+                        <X size={20} />
+                    </button>
+                </div>
+
+                <div className={panelStyles.panelContent}>
+                    {error && <div className={panelStyles.panelError}>{error}</div>}
+
+                    {loadingEmpresas ? (
+                        <div className={panelStyles.loadingText}>
+                            Cargando empresas...
+                        </div>
+                    ) : (
+                        <>
+                            <div style={{ marginBottom: '16px' }}>
+                                <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', fontSize: '14px', fontWeight: '500' }}>
+                                    <input
+                                        type="checkbox"
+                                        style={{ marginRight: '8px' }}
+                                        checked={empresas.length > 0 && empresas.every(empresa =>
+                                            usuarioEmpresas.some(ue => ue.empresaId === empresa.id)
+                                        )}
+                                        onChange={handleSeleccionarTodas}
+                                    />
+                                    Seleccionar todas las empresas
+                                </label>
+                            </div>
+
+                            <p style={{ marginBottom: '16px', color: 'var(--color-text-muted)' }}>
+                                Selecciona las empresas a las que el usuario tendrá acceso y elige una como predeterminada.
+                            </p>
+
+                            {empresas.map((empresa) => {
+                                const isAsignada = usuarioEmpresas.some(ue => ue.empresaId === empresa.id)
+                                const isDefault = usuarioEmpresas.some(ue => ue.empresaId === empresa.id && ue.esDefault)
+
+                                return (
+                                    <div key={empresa.id} className={panelStyles.empresaItem}>
+                                        <input
+                                            type="checkbox"
+                                            className={panelStyles.empresaCheckbox}
+                                            checked={isAsignada}
+                                            onChange={() => handleEmpresaToggle(empresa.id)}
+                                        />
+                                        <div className={panelStyles.empresaInfo}>
+                                            <div className={panelStyles.empresaNombre}>{empresa.nombre}</div>
+                                            <div className={panelStyles.empresaClave}>{empresa.clave} • {empresa.rfc}</div>
+                                        </div>
+                                        {isAsignada && (
+                                            <input
+                                                type="radio"
+                                                className={panelStyles.empresaRadio}
+                                                name="empresaDefault"
+                                                checked={isDefault}
+                                                onChange={() => handleEmpresaDefaultChange(empresa.id)}
+                                            />
+                                        )}
+                                    </div>
+                                )
+                            })}
+                        </>
+                    )}
+                </div>
+
+                <div className={panelStyles.panelActions}>
+                    <button className={mStyles.btnCancel} onClick={cerrarPanel}>
+                        <X size={15} /> Cancelar
+                    </button>
+                    <button
+                        className={mStyles.btnSave}
+                        onClick={handleGuardarAsignacion}
+                        disabled={isSaving || usuarioEmpresas.length === 0}
+                    >
+                        <Save size={15} /> {isSaving ? 'Guardando...' : 'Guardar asignación'}
+                    </button>
+                </div>
+            </div>
         </div>
     )
 }

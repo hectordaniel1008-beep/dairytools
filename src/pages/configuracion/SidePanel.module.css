@@ -1,0 +1,140 @@
+.panel {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: white;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel.open {
+    right: 0;
+}
+
+.panelHeader {
+    padding: 20px;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--color-bg-primary);
+}
+
+.panelTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: 0;
+}
+
+.panelClose {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.panelClose:hover {
+    background: var(--color-bg-hover);
+}
+
+.panelContent {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.panelOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.panelOverlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.empresaItem {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+}
+
+.empresaItem:hover {
+    border-color: var(--color-primary);
+    background: var(--color-bg-subtle);
+}
+
+.empresaCheckbox {
+    margin-right: 12px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.empresaInfo {
+    flex: 1;
+}
+
+.empresaNombre {
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: 2px;
+}
+
+.empresaClave {
+    font-size: 12px;
+    color: var(--color-text-muted);
+}
+
+.empresaRadio {
+    margin-left: 12px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.panelActions {
+    padding: 20px;
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    gap: 12px;
+}
+
+.panelError {
+    color: var(--color-error);
+    font-size: 14px;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 6px;
+}
+
+.loadingText {
+    text-align: center;
+    color: var(--color-text-muted);
+    padding: 20px;
+}

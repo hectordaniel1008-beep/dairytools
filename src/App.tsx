@@ -65,8 +65,8 @@ export default function App() {
 
               <Route path="configuracion">
                 <Route index element={<ConfiguracionPage />} />
-                <Route path="usuarios" element={<UsuariosPage />} />
                 <Route path="empresas" element={<EmpresasPage />} />
+                <Route path="usuarios" element={<UsuariosPage />} />
               </Route>
             </Route>
 

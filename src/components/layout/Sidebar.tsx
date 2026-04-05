@@ -47,8 +47,8 @@ const navModules: NavModule[] = [
     icon: <Settings size={18} />,
     base: '/configuracion',
     subItems: [
-      { label: 'Usuarios', to: '/configuracion/usuarios' },
       { label: 'Empresas', to: '/configuracion/empresas' },
+      { label: 'Usuarios', to: '/configuracion/usuarios' },
     ],
   },
 ]

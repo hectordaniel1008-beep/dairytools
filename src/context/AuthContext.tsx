@@ -3,19 +3,19 @@ import type { AuthState, User, Empresa } from '../types'
 import { authService } from '../api/services'
 
 interface AuthContextType extends AuthState {
-  login:            (email: string, password: string) => Promise<void>
-  logout:           () => void
+  login: (email: string, password: string) => Promise<void>
+  logout: () => void
   setEmpresaActiva: (empresa: Empresa) => void
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
 const ESTADO_VACIO: AuthState = {
-  user:            null,
-  empresaActiva:   null,
-  empresas:        [],
+  user: null,
+  empresaActiva: null,
+  empresas: [],
   isAuthenticated: false,
-  isLoading:       false,
+  isLoading: false,
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -33,17 +33,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data: res } = await authService.perfil()
 
       if (res.success && res.data) {
-        const defaultEmpresa = res.data.empresas?.find(e => e.es_default)
-          ?? res.data.empresa_activa
-          ?? res.data.empresas?.[0]
-          ?? null
+        // La empresa activa ya viene del backend con la marca es_default
+        const defaultEmpresa = res.data.empresa_activa ?? null
 
         setState({
-          user:            res.data.user,
-          empresaActiva:   defaultEmpresa,
-          empresas:        res.data.empresas ?? [],
+          user: res.data.user,
+          empresaActiva: defaultEmpresa,
+          empresas: res.data.empresas ?? [],
           isAuthenticated: true,
-          isLoading:       false,
+          isLoading: false,
         })
       } else {
         // La API respondió pero sin datos válidos
@@ -65,15 +63,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { user, empresa_activa, empresas } = res.data
 
-    // Buscar la empresa marcada como default, si no la primera
-    const defaultEmpresa = empresas?.find(e => e.es_default) ?? empresa_activa ?? empresas?.[0] ?? null
-
     setState({
       user,
-      empresaActiva:   defaultEmpresa,
-      empresas:        empresas       ?? [],
+      empresaActiva: empresa_activa, // Ya viene con la marca es_default del backend
+      empresas: empresas ?? [],
       isAuthenticated: true,
-      isLoading:       false,
+      isLoading: false,
     })
   }
 

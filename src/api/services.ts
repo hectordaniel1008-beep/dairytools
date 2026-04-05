@@ -14,6 +14,7 @@ import type {
 export interface EmpresaPayload {
   nombre: string
   clave: string
+  rfc?: string
   color?: string
   estatus?: boolean
   logoUrl?: string
@@ -131,6 +132,12 @@ export const usuariosService = {
     api.patch<ApiResponse<UsuarioCatalogo>>(`/usuarios/${id}`, data),
 
   eliminar: (id: number) => api.delete<ApiResponse<null>>(`/usuarios/${id}`),
+
+  obtenerEmpresas: (usuarioId: number) =>
+    api.get<ApiResponse<any[]>>(`/usuarios/${usuarioId}/empresas`),
+
+  actualizarEmpresas: (usuarioId: number, asignaciones: any[]) =>
+    api.patch<ApiResponse<null>>(`/usuarios/${usuarioId}/empresas`, asignaciones),
 }
 
 // ── Pesaje ───────────────────────────────────────────────────

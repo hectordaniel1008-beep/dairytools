@@ -18,6 +18,22 @@ export default function ConfiguracionPage() {
 
             <div className="grid gap-4 md:grid-cols-2">
                 <Link
+                    to="/configuracion/empresas"
+                    className="group rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg)] p-6 shadow-[var(--shadow-sm)] transition duration-150 ease-in-out hover:border-[var(--color-secondary)] hover:bg-[var(--color-bg-subtle)]"
+                >
+                    <div className="flex items-center gap-3 mb-3">
+                        <div className="w-11 h-11 rounded-[14px] bg-[var(--color-secondary-bg)] text-[var(--color-secondary)] flex items-center justify-center">
+                            <Building2 size={20} />
+                        </div>
+                        <div>
+                            <h3 className="text-[var(--font-size-lg)] font-semibold">Empresas</h3>
+                            <p className="text-[var(--font-size-sm)] text-[var(--color-text-muted)]">Gestiona las empresas vinculadas.</p>
+                        </div>
+                    </div>
+                    <span className="text-[var(--color-secondary)] text-[var(--font-size-sm)] font-medium">Ir a Empresas →</span>
+                </Link>
+
+                <Link
                     to="/configuracion/usuarios"
                     className="group rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg)] p-6 shadow-[var(--shadow-sm)] transition duration-150 ease-in-out hover:border-[var(--color-primary)] hover:bg-[var(--color-bg-subtle)]"
                 >
@@ -33,21 +49,7 @@ export default function ConfiguracionPage() {
                     <span className="text-[var(--color-primary)] text-[var(--font-size-sm)] font-medium">Ir a Usuarios →</span>
                 </Link>
 
-                <Link
-                    to="/configuracion/empresas"
-                    className="group rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg)] p-6 shadow-[var(--shadow-sm)] transition duration-150 ease-in-out hover:border-[var(--color-secondary)] hover:bg-[var(--color-bg-subtle)]"
-                >
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="w-11 h-11 rounded-[14px] bg-[var(--color-secondary-bg)] text-[var(--color-secondary)] flex items-center justify-center">
-                            <Building2 size={20} />
-                        </div>
-                        <div>
-                            <h3 className="text-[var(--font-size-lg)] font-semibold">Empresas</h3>
-                            <p className="text-[var(--font-size-sm)] text-[var(--color-text-muted)]">Gestiona las empresas vinculadas.</p>
-                        </div>
-                    </div>
-                    <span className="text-[var(--color-secondary)] text-[var(--font-size-sm)] font-medium">Ir a Empresas →</span>
-                </Link>
+
             </div>
         </div>
     )
