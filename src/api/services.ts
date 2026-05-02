@@ -9,6 +9,7 @@ import type {
   PaginationParams,
   Empresa,
   UsuarioCatalogo,
+  PaginatedResponse, // added PaginatedResponse to the import list
 } from '@/types'
 
 export interface EmpresaPayload {
@@ -161,4 +162,30 @@ export const pesajeService = {
     api.get<ApiResponse<{ pesajes_hoy: number; peso_promedio: number; total_mes: number }>>(
       '/pesaje/resumen'
     ),
+}
+
+// ── Productos ────────────────────────────────────────────────
+export const productosService = {
+  listar: (page?: number, limit?: number, search?: string) =>
+    api.get<PaginatedResponse<any>>('/leche/productos', {
+      params: { page, limit, search }
+    }),
+
+  obtener: (id: number) =>
+    api.get<ApiResponse<any>>(`/leche/productos/${id}`),
+
+  crear: (data: any) =>
+    api.post<ApiResponse<any>>('/leche/productos', data),
+
+  actualizar: (id: number, data: any) =>
+    api.patch<ApiResponse<any>>(`/leche/productos/${id}`, data),
+
+  eliminar: (id: number) =>
+    api.delete<ApiResponse<null>>(`/leche/productos/${id}`),
+
+  generarClave: () =>
+    api.get<ApiResponse<{ clave: string }>>('/leche/productos/clave/next'),
+
+  seedData: () =>
+    api.post<ApiResponse<null>>('/leche/productos/seed'),
 }

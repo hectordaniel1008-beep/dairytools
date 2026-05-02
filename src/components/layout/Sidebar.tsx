@@ -5,7 +5,8 @@ import styles from './Sidebar.module.css'
 
 interface SubItem {
   label: string
-  to: string
+  to?: string
+  subItems?: SubItem[]
 }
 
 interface NavModule {
@@ -24,6 +25,7 @@ const navModules: NavModule[] = [
       { label: 'Dashboard', to: '/leche/dashboard' },
       { label: 'Registros', to: '/leche/registros' },
       { label: 'Mapa', to: '/leche/mapa' },
+      { label: 'Catálogos', subItems: [{ label: 'Productos', to: '/leche/productos' }] },
     ],
   },
   {
@@ -68,8 +70,50 @@ export default function Sidebar({ onClose }: Props) {
     return init
   })
 
+  const [subExpanded, setSubExpanded] = useState<Record<string, boolean>>({})
+
   function toggleModule(base: string) {
     setExpanded((prev) => ({ ...prev, [base]: !prev[base] }))
+  }
+
+  function toggleSub(base: string, label: string) {
+    const key = `${base}-${label}`
+    setSubExpanded((prev) => ({ ...prev, [key]: !prev[key] }))
+  }
+
+  function renderSubItems(items: SubItem[], base: string, level: number = 0) {
+    return items.map((item) => {
+      if (item.subItems) {
+        const key = `${base}-${item.label}`
+        const isOpen = subExpanded[key] ?? false
+        return (
+          <div key={item.label}>
+            <button
+              className={`${styles.subItem} ${styles.subGroup}`}
+              onClick={() => toggleSub(base, item.label)}
+            >
+              <span>{item.label}</span>
+              <ChevronRight size={14} className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`} />
+            </button>
+            {isOpen && (
+              <div className={styles.nestedItems}>
+                {renderSubItems(item.subItems, base, level + 1)}
+              </div>
+            )}
+          </div>
+        )
+      } else {
+        return (
+          <NavLink
+            key={item.to}
+            to={item.to!}
+            className={({ isActive }) => `${styles.subItem} ${isActive ? styles.subActive : ''}`}
+          >
+            {item.label}
+          </NavLink>
+        )
+      }
+    })
   }
 
   return (
@@ -105,15 +149,7 @@ export default function Sidebar({ onClose }: Props) {
 
               {isOpen && (
                 <div className={styles.subItems}>
-                  {mod.subItems.map((sub) => (
-                    <NavLink
-                      key={sub.to}
-                      to={sub.to}
-                      className={({ isActive }) => `${styles.subItem} ${isActive ? styles.subActive : ''}`}
-                    >
-                      {sub.label}
-                    </NavLink>
-                  ))}
+                  {renderSubItems(mod.subItems, mod.base)}
                 </div>
               )}
             </div>

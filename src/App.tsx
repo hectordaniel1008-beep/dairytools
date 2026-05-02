@@ -11,6 +11,7 @@ import LoginPage from './pages/auth/Login'
 import LecheDashboard from './pages/leche/LecheDashboard'
 import LechePage from './pages/leche/Leche'
 import LecheMapa from './pages/leche/LecheMapa'
+import ProductosPage from './pages/leche/Productos'
 
 // Agrícola
 import AgricolaDashboard from './pages/agricola/AgricolaDashboard'
@@ -49,6 +50,7 @@ export default function App() {
                 <Route path="dashboard" element={<LecheDashboard />} />
                 <Route path="registros" element={<LechePage />} />
                 <Route path="mapa" element={<LecheMapa />} />
+                <Route path="productos" element={<ProductosPage />} />
               </Route>
 
               {/* Módulo: Producción Agrícola */}

@@ -98,6 +98,19 @@ export interface ApiResponse<T> {
   total?: number
 }
 
+// Respuesta paginada de la API
+export interface PaginatedResponse<T> {
+  success: boolean
+  data: T[]
+  pagination: {
+    total: number
+    page: number
+    limit: number
+    totalPages: number
+  }
+  mensaje?: string
+}
+
 // ── Parámetros de paginación ─────────────────────────────────
 export interface PaginationParams {
   pagina?: number
