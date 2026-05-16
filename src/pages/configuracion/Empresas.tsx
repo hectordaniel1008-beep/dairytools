@@ -238,15 +238,14 @@ export default function EmpresasPage() {
             <div className={styles.toolbar}>
                 <div className={styles.header}>
                     <div className={styles.iconWrapper}>
-                        <Building2 size={22} />
+                        <Building2 size={16} />
                     </div>
                     <div>
                         <h2 className={styles.pageTitle}>Empresas</h2>
-                        <p className={styles.pageSubtitle}>Gestiona las empresas vinculadas</p>
                     </div>
                 </div>
                 <button className={styles.primaryButton} onClick={abrirModalNueva}>
-                    <Plus size={16} /> Nueva empresa
+                    <Plus size={15} /> Nueva empresa
                 </button>
             </div>
 

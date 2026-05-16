@@ -24,7 +24,7 @@ interface PaginationInfo {
   totalPages: number
 }
 
-const ITEMS_PER_PAGE = 15
+const ITEMS_PER_PAGE = 25
 
 export default function ProductosPage() {
   const [productos, setProductos] = useState<Producto[]>([])
@@ -54,7 +54,7 @@ export default function ProductosPage() {
   })
 
   // Cargar productos con paginación
-  const cargarProductos = useCallback(async (page = 1, search = busqueda) => {
+  const cargarProductos = useCallback(async (page = 1, search = '') => {
     setLoading(true)
     setError('')
 
@@ -77,7 +77,7 @@ export default function ProductosPage() {
     } finally {
       setLoading(false)
     }
-  }, [busqueda])
+  }, [])
 
   useEffect(() => {
     cargarProductos()
@@ -86,16 +86,18 @@ export default function ProductosPage() {
   // Manejo de búsqueda
   const handleBusqueda = (value: string) => {
     setBusqueda(value)
-    setPagination(prev => ({ ...prev, page: 1 }))
   }
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      cargarProductos(1, busqueda)
-    }, 300)
+  const ejecutarBusqueda = () => {
+    setPagination(prev => ({ ...prev, page: 1 }))
+    cargarProductos(1, busqueda)
+  }
 
-    return () => clearTimeout(timeoutId)
-  }, [busqueda, cargarProductos])
+  const handleBusquedaKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      ejecutarBusqueda()
+    }
+  }
 
   // Manejo de paginación
   const handlePageChange = (newPage: number) => {
@@ -222,74 +224,50 @@ export default function ProductosPage() {
   }
 
   return (
-    <div style={{ padding: '1rem', maxWidth: '100%', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.875rem' }}>
-          <div style={{ width: '3rem', height: '3rem', borderRadius: '0.75rem', background: 'var(--color-primary-bg)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Package size={22} />
+    <div style={{ padding: '0 0.75rem 0.375rem', maxWidth: '100%', margin: '0 auto', height: '100%', minHeight: 0, boxSizing: 'border-box', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem', flexWrap: 'wrap', gap: '0.375rem', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', minWidth: '150px' }}>
+          <div style={{ width: '2rem', height: '2rem', borderRadius: 'var(--radius-md)', background: 'var(--color-primary-bg)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Package size={16} />
           </div>
           <div>
-            <h2 style={{ margin: 0, fontSize: 'var(--font-size-xl)', fontWeight: 700, color: 'var(--color-text-primary)' }}>Productos</h2>
-            <p style={{ margin: '0.25rem 0 0 0', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-muted)' }}>Gestiona el catálogo de productos</p>
+            <h2 style={{ margin: 0, fontSize: 'var(--font-size-base)', fontWeight: 700, color: 'var(--color-text-primary)', lineHeight: 1.1 }}>Productos</h2>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+        <div style={{ position: 'relative', flex: '0 1 340px', minWidth: '220px', maxWidth: '360px', marginLeft: 'auto' }}>
           <button
-            onClick={handleSeedData}
+            type="button"
+            onClick={ejecutarBusqueda}
+            title="Buscar"
+            aria-label="Buscar productos"
             style={{
-              background: 'var(--color-bg-subtle)',
-              color: 'var(--color-text-primary)',
-              border: '1px solid var(--color-border)',
-              padding: '0.625rem 1.25rem',
-              borderRadius: 'var(--radius-md)',
-              fontSize: 'var(--font-size-sm)',
-              fontWeight: 500,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem'
-            }}
-          >
-            <Package size={16} /> Cargar datos de prueba
-          </button>
-          <button
-            onClick={abrirModalNuevo}
-            style={{
-              background: 'var(--color-primary)',
-              color: 'white',
+              position: 'absolute',
+              right: '0.375rem',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              width: '1.5rem',
+              height: '1.5rem',
               border: 'none',
-              padding: '0.625rem 1.25rem',
-              borderRadius: 'var(--radius-md)',
-              fontSize: 'var(--font-size-sm)',
-              fontWeight: 500,
+              borderRadius: 'var(--radius-sm)',
+              background: 'transparent',
+              color: 'var(--color-text-muted)',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.5rem'
+              justifyContent: 'center'
             }}
           >
-            <Plus size={16} /> Nuevo producto
+            <Search size={15} />
           </button>
-        </div>
-      </div>
-
-      {error && !modalOpen && !confirmOpen && (
-        <p style={{ color: 'var(--color-danger)', fontSize: 'var(--font-size-sm)', margin: '0 0 1rem 0', padding: '0.75rem 1rem', background: 'var(--color-danger-bg)', border: '1px solid var(--color-danger-border)', borderRadius: 'var(--radius-md)' }}>
-          {error}
-        </p>
-      )}
-
-      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap' }}>
-        <div style={{ position: 'relative', flex: 1, minWidth: '280px', maxWidth: '400px' }}>
-          <Search size={20} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)', pointerEvents: 'none' }} />
           <input
             type="text"
-            placeholder="Buscar productos..."
+            placeholder="Buscar por nombre o clave..."
             value={busqueda}
             onChange={(e) => handleBusqueda(e.target.value)}
+            onKeyDown={handleBusquedaKeyDown}
             style={{
               width: '100%',
-              padding: '0.625rem 1rem 0.625rem 2.5rem',
+              padding: '0.35rem 2rem 0.35rem 0.75rem',
               border: '1px solid var(--color-border)',
               borderRadius: 'var(--radius-md)',
               fontSize: 'var(--font-size-sm)',
@@ -299,22 +277,78 @@ export default function ProductosPage() {
             autoComplete="off"
           />
         </div>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          <button
+            onClick={handleSeedData}
+            style={{
+              background: 'var(--color-bg-subtle)',
+              color: 'var(--color-text-primary)',
+              border: '1px solid var(--color-border)',
+              padding: '0.35rem 0.65rem',
+              borderRadius: 'var(--radius-md)',
+              fontSize: 'var(--font-size-sm)',
+              fontWeight: 500,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.375rem',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            <Package size={15} /> Cargar datos
+          </button>
+          <button
+            onClick={abrirModalNuevo}
+            style={{
+              background: 'var(--color-primary)',
+              color: 'white',
+              border: 'none',
+              padding: '0.35rem 0.65rem',
+              borderRadius: 'var(--radius-md)',
+              fontSize: 'var(--font-size-sm)',
+              fontWeight: 500,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.375rem',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            <Plus size={15} /> Nuevo
+          </button>
+        </div>
       </div>
 
-      <div style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)' }}>
+      {error && !modalOpen && !confirmOpen && (
+        <p style={{ color: 'var(--color-danger)', fontSize: 'var(--font-size-sm)', margin: '0 0 0.25rem 0', padding: '0.375rem 0.65rem', background: 'var(--color-danger-bg)', border: '1px solid var(--color-danger-border)', borderRadius: 'var(--radius-md)', flexShrink: 0 }}>
+          {error}
+        </p>
+      )}
+
+      <div style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)', flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
         {/* Tabla para desktop */}
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 'var(--font-size-sm)' }}>
+        <div style={{ flex: 1, minHeight: 0, overflow: 'auto', scrollbarGutter: 'stable' }}>
+          <table style={{ width: '100%', minWidth: '900px', tableLayout: 'fixed', borderCollapse: 'collapse', fontSize: 'var(--font-size-sm)' }}>
+            <colgroup>
+              <col style={{ width: '26%' }} />
+              <col style={{ width: '12%' }} />
+              <col style={{ width: '15%' }} />
+              <col style={{ width: '10%' }} />
+              <col style={{ width: '10%' }} />
+              <col style={{ width: '9%' }} />
+              <col style={{ width: '10%' }} />
+              <col style={{ width: '8%' }} />
+            </colgroup>
             <thead>
               <tr style={{ background: 'var(--color-bg-subtle)' }}>
-                <th style={{ padding: '1rem 0.75rem', textAlign: 'left', fontWeight: 600, color: 'var(--color-text-primary)', borderBottom: '2px solid var(--color-border)' }}>Nombre</th>
-                <th style={{ padding: '1rem 0.75rem', textAlign: 'left', fontWeight: 600, color: 'var(--color-text-primary)', borderBottom: '2px solid var(--color-border)' }}>Clave</th>
-                <th style={{ padding: '1rem 0.75rem', textAlign: 'left', fontWeight: 600, color: 'var(--color-text-primary)', borderBottom: '2px solid var(--color-border)' }}>Categoría</th>
-                <th style={{ padding: '1rem 0.75rem', textAlign: 'left', fontWeight: 600, color: 'var(--color-text-primary)', borderBottom: '2px solid var(--color-border)' }}>Precio</th>
-                <th style={{ padding: '1rem 0.75rem', textAlign: 'left', fontWeight: 600, color: 'var(--color-text-primary)', borderBottom: '2px solid var(--color-border)' }}>Unidad</th>
-                <th style={{ padding: '1rem 0.75rem', textAlign: 'left', fontWeight: 600, color: 'var(--color-text-primary)', borderBottom: '2px solid var(--color-border)' }}>Stock</th>
-                <th style={{ padding: '1rem 0.75rem', textAlign: 'left', fontWeight: 600, color: 'var(--color-text-primary)', borderBottom: '2px solid var(--color-border)' }}>Estado</th>
-                <th style={{ padding: '1rem 0.75rem', textAlign: 'left', fontWeight: 600, color: 'var(--color-text-primary)', borderBottom: '2px solid var(--color-border)' }}>Acciones</th>
+                <th style={{ padding: '0.5rem 0.6rem', textAlign: 'left', fontWeight: 600, color: 'var(--color-text-primary)', borderBottom: '2px solid var(--color-border)', background: 'var(--color-bg-subtle)', position: 'sticky', top: 0, zIndex: 2 }}>Nombre</th>
+                <th style={{ padding: '0.5rem 0.6rem', textAlign: 'left', fontWeight: 600, color: 'var(--color-text-primary)', borderBottom: '2px solid var(--color-border)', background: 'var(--color-bg-subtle)', position: 'sticky', top: 0, zIndex: 2 }}>Clave</th>
+                <th style={{ padding: '0.5rem 0.6rem', textAlign: 'left', fontWeight: 600, color: 'var(--color-text-primary)', borderBottom: '2px solid var(--color-border)', background: 'var(--color-bg-subtle)', position: 'sticky', top: 0, zIndex: 2 }}>Categoría</th>
+                <th style={{ padding: '0.5rem 0.6rem', textAlign: 'left', fontWeight: 600, color: 'var(--color-text-primary)', borderBottom: '2px solid var(--color-border)', background: 'var(--color-bg-subtle)', position: 'sticky', top: 0, zIndex: 2 }}>Precio</th>
+                <th style={{ padding: '0.5rem 0.6rem', textAlign: 'left', fontWeight: 600, color: 'var(--color-text-primary)', borderBottom: '2px solid var(--color-border)', background: 'var(--color-bg-subtle)', position: 'sticky', top: 0, zIndex: 2 }}>Unidad</th>
+                <th style={{ padding: '0.5rem 0.6rem', textAlign: 'left', fontWeight: 600, color: 'var(--color-text-primary)', borderBottom: '2px solid var(--color-border)', background: 'var(--color-bg-subtle)', position: 'sticky', top: 0, zIndex: 2 }}>Stock</th>
+                <th style={{ padding: '0.5rem 0.6rem', textAlign: 'left', fontWeight: 600, color: 'var(--color-text-primary)', borderBottom: '2px solid var(--color-border)', background: 'var(--color-bg-subtle)', position: 'sticky', top: 0, zIndex: 2 }}>Estado</th>
+                <th style={{ padding: '0.5rem 0.6rem', textAlign: 'left', fontWeight: 600, color: 'var(--color-text-primary)', borderBottom: '2px solid var(--color-border)', background: 'var(--color-bg-subtle)', position: 'sticky', top: 0, zIndex: 2 }}>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -342,49 +376,47 @@ export default function ProductosPage() {
               ) : (
                 productos.map((producto) => (
                   <tr key={producto.id} style={{ borderBottom: '1px solid var(--color-border)' }}>
-                    <td style={{ padding: '0.75rem', verticalAlign: 'top' }}>
-                      <div style={{ fontWeight: 600, color: 'var(--color-text-primary)', lineHeight: 1.4 }}>{producto.nombre}</div>
-                      {producto.descripcion && (
-                        <div style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-xs)', lineHeight: 1.3, margin: '0.25rem 0 0 0' }}>{producto.descripcion}</div>
-                      )}
+                    <td style={{ padding: '0.45rem 0.6rem', verticalAlign: 'middle' }}>
+                      <div style={{ fontWeight: 600, color: 'var(--color-text-primary)', lineHeight: 1.2 }}>{producto.nombre}</div>
                     </td>
-                    <td style={{ padding: '0.75rem', fontFamily: 'monospace', fontWeight: 500, color: 'var(--color-text-primary)' }}>{producto.clave}</td>
-                    <td style={{ padding: '0.75rem' }}>
+                    <td style={{ padding: '0.45rem 0.6rem', fontFamily: 'monospace', fontWeight: 500, color: 'var(--color-text-primary)' }}>{producto.clave}</td>
+                    <td style={{ padding: '0.45rem 0.6rem' }}>
                       {producto.categoria && (
-                        <span style={{ background: 'var(--color-secondary-bg)', color: 'var(--color-secondary)', padding: '0.25rem 0.75rem', borderRadius: 'var(--radius-sm)', fontSize: 'var(--font-size-xs)', fontWeight: 500, display: 'inline-block' }}>
+                        <span style={{ background: 'var(--color-secondary-bg)', color: 'var(--color-secondary)', padding: '0.15rem 0.5rem', borderRadius: 'var(--radius-sm)', fontSize: 'var(--font-size-xs)', fontWeight: 500, display: 'inline-block', lineHeight: 1.2 }}>
                           {producto.categoria}
                         </span>
                       )}
                     </td>
-                    <td style={{ padding: '0.75rem', fontWeight: 600, color: 'var(--color-success)' }}>
+                    <td style={{ padding: '0.45rem 0.6rem', fontWeight: 600, color: 'var(--color-success)' }}>
                       {producto.precio ? `$${(typeof producto.precio === 'string' ? parseFloat(producto.precio) : producto.precio).toFixed(2)}` : '-'}
                     </td>
-                    <td style={{ padding: '0.75rem', color: 'var(--color-text-muted)' }}>{producto.unidad || '-'}</td>
-                    <td style={{ padding: '0.75rem', fontWeight: 500, color: 'var(--color-text-primary)' }}>
+                    <td style={{ padding: '0.45rem 0.6rem', color: 'var(--color-text-muted)' }}>{producto.unidad || '-'}</td>
+                    <td style={{ padding: '0.45rem 0.6rem', fontWeight: 500, color: 'var(--color-text-primary)' }}>
                       {producto.stock != null ? (typeof producto.stock === 'string' ? parseFloat(producto.stock) : producto.stock).toString() : '-'}
                     </td>
-                    <td style={{ padding: '0.75rem' }}>
+                    <td style={{ padding: '0.45rem 0.6rem' }}>
                       <span style={{
-                        padding: '0.25rem 0.75rem',
+                        padding: '0.15rem 0.5rem',
                         borderRadius: 'var(--radius-sm)',
                         fontSize: 'var(--font-size-xs)',
                         fontWeight: 500,
                         display: 'inline-block',
+                        lineHeight: 1.2,
                         background: producto.estatus ? 'var(--color-success-bg)' : 'var(--color-danger-bg)',
                         color: producto.estatus ? 'var(--color-success)' : 'var(--color-danger)'
                       }}>
                         {producto.estatus ? 'Activo' : 'Inactivo'}
                       </span>
                     </td>
-                    <td style={{ padding: '0.75rem' }}>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <td style={{ padding: '0.45rem 0.6rem' }}>
+                      <div style={{ display: 'flex', gap: '0.35rem' }}>
                         <button
                           onClick={() => abrirModalEditar(producto)}
                           style={{
                             background: 'transparent',
                             border: '1px solid var(--color-border)',
                             color: 'var(--color-text-muted)',
-                            padding: '0.375rem',
+                            padding: '0.25rem',
                             borderRadius: 'var(--radius-sm)',
                             cursor: 'pointer',
                             transition: 'all 0.2s ease',
@@ -394,7 +426,7 @@ export default function ProductosPage() {
                           }}
                           title="Editar"
                         >
-                          <Edit2 size={16} />
+                          <Edit2 size={14} />
                         </button>
                         <button
                           onClick={() => {
@@ -405,7 +437,7 @@ export default function ProductosPage() {
                             background: 'transparent',
                             border: '1px solid var(--color-border)',
                             color: 'var(--color-text-muted)',
-                            padding: '0.375rem',
+                            padding: '0.25rem',
                             borderRadius: 'var(--radius-sm)',
                             cursor: 'pointer',
                             transition: 'all 0.2s ease',
@@ -415,7 +447,7 @@ export default function ProductosPage() {
                           }}
                           title="Eliminar"
                         >
-                          <Trash2 size={16} />
+                          <Trash2 size={14} />
                         </button>
                       </div>
                     </td>
@@ -428,7 +460,7 @@ export default function ProductosPage() {
 
         {/* Paginación */}
         {pagination.totalPages > 1 && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.5rem', borderTop: '1px solid var(--color-border)', background: 'var(--color-bg-subtle)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.5rem', borderTop: '1px solid var(--color-border)', background: 'var(--color-bg-subtle)', flexShrink: 0 }}>
             <div style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)' }}>
               Mostrando {productos.length} de {pagination.total} productos
             </div>
@@ -436,6 +468,8 @@ export default function ProductosPage() {
               <button
                 onClick={() => handlePageChange(pagination.page - 1)}
                 disabled={pagination.page === 1}
+                title="Anterior"
+                aria-label="Anterior"
                 style={{
                   background: 'var(--color-bg)',
                   border: '1px solid var(--color-border)',
@@ -451,7 +485,6 @@ export default function ProductosPage() {
                 }}
               >
                 <ChevronLeft size={16} />
-                Anterior
               </button>
 
               <span style={{ color: 'var(--color-text-primary)', fontWeight: 600, padding: '0.5rem 0.75rem' }}>
@@ -461,6 +494,8 @@ export default function ProductosPage() {
               <button
                 onClick={() => handlePageChange(pagination.page + 1)}
                 disabled={pagination.page === pagination.totalPages}
+                title="Siguiente"
+                aria-label="Siguiente"
                 style={{
                   background: 'var(--color-bg)',
                   border: '1px solid var(--color-border)',
@@ -475,7 +510,6 @@ export default function ProductosPage() {
                   opacity: pagination.page === pagination.totalPages ? 0.5 : 1
                 }}
               >
-                Siguiente
                 <ChevronRight size={16} />
               </button>
             </div>

@@ -6,5 +6,9 @@ export default defineConfig({
   server: {
     port: 3000,
     host: true,
+    allowedHosts: [
+      '.trycloudflare.com', // Permite cualquier dominio que termine en .trycloudflare.com
+      // 'otro-dominio.com' // Puedes añadir más si es necesario
+    ],
   },
 })

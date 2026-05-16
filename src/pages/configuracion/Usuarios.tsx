@@ -350,15 +350,14 @@ export default function UsuariosPage() {
             <div className={styles.toolbar}>
                 <div className={styles.header}>
                     <div className={styles.iconWrapper}>
-                        <Users size={22} />
+                        <Users size={16} />
                     </div>
                     <div>
                         <h2 className={styles.pageTitle}>Usuarios</h2>
-                        <p className={styles.pageSubtitle}>Gestiona los usuarios del sistema</p>
                     </div>
                 </div>
                 <button className={styles.primaryButton} onClick={abrirModalNuevo}>
-                    <Plus size={16} /> Nuevo usuario
+                    <Plus size={15} /> Nuevo usuario
                 </button>
             </div>
 
@@ -589,7 +588,7 @@ export default function UsuariosPage() {
                     <h3 className={panelStyles.panelTitle}>
                         Asignar empresas a {selectedUsuario?.nombre}
                     </h3>
-                    <button className={panelStyles.panelClose} onClick={cerrarPanel}>
+                    <button type="button" className={panelStyles.panelClose} onClick={cerrarPanel} aria-label="Cerrar panel">
                         <X size={20} />
                     </button>
                 </div>
@@ -631,6 +630,7 @@ export default function UsuariosPage() {
                                             type="checkbox"
                                             className={panelStyles.empresaCheckbox}
                                             checked={isAsignada}
+                                            aria-label={`Asignar empresa ${empresa.nombre}`}
                                             onChange={() => handleEmpresaToggle(empresa.id)}
                                         />
                                         <div className={panelStyles.empresaInfo}>
@@ -643,6 +643,7 @@ export default function UsuariosPage() {
                                                 className={panelStyles.empresaRadio}
                                                 name="empresaDefault"
                                                 checked={isDefault}
+                                                aria-label={`Empresa predeterminada ${empresa.nombre}`}
                                                 onChange={() => handleEmpresaDefaultChange(empresa.id)}
                                             />
                                         )}
