@@ -574,7 +574,7 @@ export default function UsuariosPage() {
                         <button className={mStyles.btnCancel} onClick={cancelarEliminar}>
                             <X size={15} /> Cancelar
                         </button>
-                        <button className={mStyles.btnSave} onClick={confirmarEliminar}>
+                        <button className={mStyles.btnDanger} onClick={confirmarEliminar}>
                             Eliminar
                         </button>
                     </div>

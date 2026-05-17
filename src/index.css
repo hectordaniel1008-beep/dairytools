@@ -29,6 +29,10 @@
   --color-success: #2da44e;
   --color-warning: #e69519;
   --color-error:   #d1363b;
+  --color-danger:  #d1363b;
+  --color-danger-bg: #fdecea;
+  --color-danger-border: #f5c2c0;
+  --color-danger-hover: #b92b32;
   --color-info:    #1e5a96;
 
   /* --- Sidebar — azul marino extraído del logo --- */

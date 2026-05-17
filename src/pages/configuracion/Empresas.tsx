@@ -426,7 +426,7 @@ export default function EmpresasPage() {
                             <X size={15} /> Cancelar
                         </button>
                         <button
-                            className={mStyles.btnSave}
+                            className={mStyles.btnDanger}
                             onClick={confirmarEliminar}
                         >
                             Eliminar

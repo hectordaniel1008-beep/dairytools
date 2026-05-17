@@ -21,7 +21,7 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": false,
-    "ignoreDeprecations": "6.0",
+    "ignoreDeprecations": "5.0",
     "types": [
       "vite/client"
     ],

@@ -183,9 +183,6 @@ export const productosService = {
   eliminar: (id: number) =>
     api.delete<ApiResponse<null>>(`/leche/productos/${id}`),
 
-  generarClave: () =>
-    api.get<ApiResponse<{ clave: string }>>('/leche/productos/clave/next'),
-
-  seedData: () =>
-    api.post<ApiResponse<null>>('/leche/productos/seed'),
+  catalogos: () =>
+    api.get<ApiResponse<any>>('/leche/productos/catalogos'),
 }

@@ -121,6 +121,26 @@
   transform: translateY(-1px);
 }
 
+.btnDanger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 22px;
+  background: var(--color-danger);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: #fff;
+  transition: opacity var(--transition), transform var(--transition);
+  font-family: inherit;
+}
+
+.btnDanger:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
 .errorText {
   color: var(--color-error);
   font-size: var(--font-size-sm);

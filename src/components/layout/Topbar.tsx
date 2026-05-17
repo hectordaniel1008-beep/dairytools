@@ -122,7 +122,6 @@ export default function Topbar({ onMenuToggle }: Props) {
 
           {menuOpen && (
             <div className={styles.dropdown}>
-              <button className={styles.dropdownItem}><User size={15} /> Mi perfil</button>
               <div className={styles.dropdownDivider} />
               <button className={`${styles.dropdownItem} ${styles.danger}`} onClick={handleLogout}>
                 <LogOut size={15} /> Cerrar sesión
