@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Search, Plus, Edit2, Trash2, Package, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Search, Plus, Edit, Trash2, Package, ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { productosService } from '../../api/services'
+import { useEmpresa } from '../../context/EmpresaContext'
+import styles from './Productos.module.css'
 
 interface CatalogoSimple {
   id: number
@@ -41,7 +43,16 @@ const FORM_INIT = {
   unidadMedidaId: ''
 }
 
+const DIVISIONES: CatalogoSimple[] = [
+  { id: 1, descripcion: 'Agricola' },
+  { id: 2, descripcion: 'Leche' }
+]
+
+const getDivisionDescripcion = (division: number) =>
+  DIVISIONES.find(item => item.id === division)?.descripcion || division
+
 export default function ProductosPage() {
+  const { empresaActual } = useEmpresa()
   const [productos, setProductos] = useState<Producto[]>([])
   const [tiposProducto, setTiposProducto] = useState<CatalogoSimple[]>([])
   const [unidadesMedida, setUnidadesMedida] = useState<CatalogoSimple[]>([])
@@ -95,12 +106,19 @@ export default function ProductosPage() {
   }, [])
 
   useEffect(() => {
+    if (!empresaActual?.id) return
+
+    setModalOpen(false)
+    setConfirmOpen(false)
+    setSelectedProducto(null)
+    setBusqueda('')
+    setForm(FORM_INIT)
     cargarCatalogos().catch((err) => {
       console.error(err)
       setError('No se pudieron cargar los catalogos')
     })
     cargarProductos()
-  }, [cargarCatalogos, cargarProductos])
+  }, [empresaActual?.id, cargarCatalogos, cargarProductos])
 
   const ejecutarBusqueda = () => {
     setPagination(prev => ({ ...prev, page: 1 }))
@@ -217,22 +235,22 @@ export default function ProductosPage() {
   }
 
   return (
-    <div style={{ padding: '0 0.75rem 0.375rem', maxWidth: '100%', margin: '0 auto', height: '100%', minHeight: 0, boxSizing: 'border-box', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem', flexWrap: 'wrap', gap: '0.375rem', flexShrink: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', minWidth: '150px' }}>
-          <div style={{ width: '2rem', height: '2rem', borderRadius: 'var(--radius-md)', background: 'var(--color-primary-bg)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+    <div className={styles.page}>
+      <div className={styles.header}>
+        <div className={styles.titleWrap}>
+          <div className={styles.iconBadge}>
             <Package size={16} />
           </div>
-          <h2 style={{ margin: 0, fontSize: 'var(--font-size-base)', fontWeight: 700, color: 'var(--color-text-primary)', lineHeight: 1.1 }}>Productos</h2>
+          <h2 className={styles.title}>Productos</h2>
         </div>
 
-        <div style={{ position: 'relative', flex: '0 1 340px', minWidth: '220px', maxWidth: '360px', marginLeft: 'auto' }}>
+        <div className={styles.searchWrap}>
           <button
             type="button"
             onClick={ejecutarBusqueda}
             title="Buscar"
             aria-label="Buscar productos"
-            style={{ position: 'absolute', right: '0.375rem', top: '50%', transform: 'translateY(-50%)', width: '1.5rem', height: '1.5rem', border: 'none', borderRadius: 'var(--radius-sm)', background: 'transparent', color: 'var(--color-text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            className={styles.searchButton}
           >
             <Search size={15} />
           </button>
@@ -242,71 +260,91 @@ export default function ProductosPage() {
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             onKeyDown={handleBusquedaKeyDown}
-            style={{ width: '100%', padding: '0.35rem 2rem 0.35rem 0.75rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', fontSize: 'var(--font-size-sm)', background: 'var(--color-bg)', color: 'var(--color-text-primary)' }}
+            className={styles.searchInput}
             autoComplete="off"
           />
         </div>
 
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-          <button onClick={abrirModalNuevo} style={{ background: 'var(--color-primary)', color: 'white', border: 'none', padding: '0.35rem 0.65rem', borderRadius: 'var(--radius-md)', fontSize: 'var(--font-size-sm)', fontWeight: 500, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.375rem', whiteSpace: 'nowrap' }}>
+        <div className={styles.controls}>
+          <button type="button" onClick={abrirModalNuevo} className={styles.primaryButton}>
             <Plus size={15} /> Nuevo
           </button>
         </div>
       </div>
 
-      {error && !modalOpen && !confirmOpen && (
-        <p style={{ color: 'var(--color-danger)', fontSize: 'var(--font-size-sm)', margin: '0 0 0.25rem 0', padding: '0.375rem 0.65rem', background: 'var(--color-danger-bg)', border: '1px solid var(--color-danger-border)', borderRadius: 'var(--radius-md)', flexShrink: 0 }}>
-          {error}
-        </p>
-      )}
+      {error && !modalOpen && !confirmOpen && <p className={styles.errorText}>{error}</p>}
 
-      <div style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', overflow: 'hidden', boxShadow: 'var(--shadow-sm)', flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-        <div style={{ flex: 1, minHeight: 0, overflow: 'auto', scrollbarGutter: 'stable' }}>
-          <table style={{ width: '100%', minWidth: '1120px', tableLayout: 'fixed', borderCollapse: 'collapse', fontSize: 'var(--font-size-sm)' }}>
+      <div className={styles.content}>
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
             <colgroup>
-              <col style={{ width: '20%' }} />
-              <col style={{ width: '12%' }} />
-              <col style={{ width: '7%' }} />
-              <col style={{ width: '10%' }} />
-              <col style={{ width: '11%' }} />
-              <col style={{ width: '11%' }} />
-              <col style={{ width: '13%' }} />
-              <col style={{ width: '8%' }} />
-              <col style={{ width: '8%' }} />
+              <col className={styles.colNombre} />
+              <col className={styles.colTipo} />
+              <col className={styles.colDivision} />
+              <col className={styles.colProveedor} />
+              <col className={styles.colCodigoErp} />
+              <col className={styles.colCodigoProveedor} />
+              <col className={styles.colCodigoAlimentacion} />
+              <col className={styles.colUnidad} />
+              <col className={styles.colAcciones} />
             </colgroup>
             <thead>
-              <tr style={{ background: 'var(--color-bg-subtle)' }}>
-                {['Nombre', 'Tipo', 'Division', 'Proveedor', 'Codigo ERP', 'Codigo proveedor', 'Codigo alimentacion', 'Unidad', 'Acciones'].map((header) => (
-                  <th key={header} style={{ padding: '0.5rem 0.6rem', textAlign: header === 'Acciones' ? 'center' : 'left', fontWeight: 600, color: 'var(--color-text-primary)', borderBottom: '2px solid var(--color-border)', background: 'var(--color-bg-subtle)', position: 'sticky', top: 0, zIndex: 2 }}>{header}</th>
-                ))}
+              <tr>
+                <th className={styles.tableHeader}>Nombre</th>
+                <th className={styles.tableHeader}>Tipo</th>
+                <th className={styles.tableHeader}>Division</th>
+                <th className={styles.tableHeader}>Proveedor</th>
+                <th className={styles.tableHeader}>Codigo ERP</th>
+                <th className={styles.tableHeader}>Codigo proveedor</th>
+                <th className={styles.tableHeader}>Codigo alimentacion</th>
+                <th className={styles.tableHeader}>Unidad</th>
+                <th className={`${styles.tableHeader} ${styles.actionsHeader}`}>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={9} style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--color-text-muted)' }}>Cargando productos...</td>
+                  <td colSpan={9} className={styles.emptyCell}>
+                    Cargando productos...
+                  </td>
                 </tr>
               ) : productos.length === 0 ? (
                 <tr>
-                  <td colSpan={9} style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--color-text-muted)' }}>No hay productos registrados</td>
+                  <td colSpan={9} className={styles.emptyCell}>
+                    No hay productos registrados
+                  </td>
                 </tr>
               ) : (
                 productos.map((producto) => (
-                  <tr key={producto.id} style={{ borderBottom: '1px solid var(--color-border)' }}>
-                    <td style={{ padding: '0.45rem 0.6rem', fontWeight: 600, color: 'var(--color-text-primary)' }}>{producto.nombre}</td>
-                    <td style={{ padding: '0.45rem 0.6rem' }}>{producto.tipoProducto?.descripcion || producto.tipoProductoId}</td>
-                    <td style={{ padding: '0.45rem 0.6rem' }}>{producto.division}</td>
-                    <td style={{ padding: '0.45rem 0.6rem' }}>{producto.proveedorUltimaCompra}</td>
-                    <td style={{ padding: '0.45rem 0.6rem', fontFamily: 'monospace' }}>{producto.codigoErp}</td>
-                    <td style={{ padding: '0.45rem 0.6rem', fontFamily: 'monospace' }}>{producto.codigoProveedor}</td>
-                    <td style={{ padding: '0.45rem 0.6rem', fontFamily: 'monospace' }}>{producto.codigoAlimentacion}</td>
-                    <td style={{ padding: '0.45rem 0.6rem' }}>{producto.unidadMedida?.descripcion || producto.unidadMedidaId}</td>
-                    <td style={{ padding: '0.45rem 0.6rem' }}>
-                      <div style={{ display: 'flex', gap: '0.35rem', justifyContent: 'center' }}>
-                        <button onClick={() => abrirModalEditar(producto)} style={{ background: 'transparent', border: '1px solid var(--color-border)', color: 'var(--color-text-muted)', padding: '0.25rem', borderRadius: 'var(--radius-sm)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Editar">
-                          <Edit2 size={14} />
+                  <tr key={producto.id} className={styles.tableRow}>
+                    <td className={styles.nameCell}>{producto.nombre}</td>
+                    <td>{producto.tipoProducto?.descripcion || producto.tipoProductoId}</td>
+                    <td>{getDivisionDescripcion(producto.division)}</td>
+                    <td>{producto.proveedorUltimaCompra}</td>
+                    <td className={styles.claveCell}>{producto.codigoErp}</td>
+                    <td className={styles.claveCell}>{producto.codigoProveedor}</td>
+                    <td className={styles.claveCell}>{producto.codigoAlimentacion}</td>
+                    <td>{producto.unidadMedida?.descripcion || producto.unidadMedidaId}</td>
+                    <td className={styles.actionsCell}>
+                      <div className={styles.actions}>
+                        <button
+                          type="button"
+                          onClick={() => abrirModalEditar(producto)}
+                          className={styles.actionButton}
+                          title="Editar"
+                        >
+                          <Edit size={14} />
                         </button>
-                        <button onClick={() => { setError(''); setSelectedProducto(producto); setConfirmOpen(true) }} style={{ background: 'transparent', border: '1px solid var(--color-border)', color: 'var(--color-text-muted)', padding: '0.25rem', borderRadius: 'var(--radius-sm)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="Eliminar">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setError('')
+                            setSelectedProducto(producto)
+                            setConfirmOpen(true)
+                          }}
+                          className={`${styles.actionButton} ${styles.actionDangerButton}`}
+                          title="Eliminar"
+                        >
                           <Trash2 size={14} />
                         </button>
                       </div>
@@ -319,18 +357,32 @@ export default function ProductosPage() {
         </div>
 
         {pagination.totalPages > 1 && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 1rem', borderTop: '1px solid var(--color-border)', background: 'var(--color-bg-subtle)', flexShrink: 0 }}>
-            <div style={{ color: 'var(--color-text-muted)', fontSize: 'var(--font-size-sm)' }}>
+          <div className={styles.pagination}>
+            <div className={styles.paginationInfo}>
               Mostrando {productos.length} de {pagination.total} productos
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <button onClick={() => handlePageChange(pagination.page - 1)} disabled={pagination.page === 1} title="Anterior" aria-label="Anterior" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)', cursor: pagination.page === 1 ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', opacity: pagination.page === 1 ? 0.5 : 1 }}>
+            <div className={styles.paginationControls}>
+              <button
+                type="button"
+                onClick={() => handlePageChange(pagination.page - 1)}
+                disabled={pagination.page === 1}
+                title="Anterior"
+                aria-label="Anterior"
+                className={styles.paginationButton}
+              >
                 <ChevronLeft size={16} />
               </button>
-              <span style={{ color: 'var(--color-text-primary)', fontWeight: 600, padding: '0.5rem 0.75rem' }}>
+              <span className={styles.paginationCurrent}>
                 {pagination.page} / {pagination.totalPages}
               </span>
-              <button onClick={() => handlePageChange(pagination.page + 1)} disabled={pagination.page === pagination.totalPages} title="Siguiente" aria-label="Siguiente" style={{ background: 'var(--color-bg)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)', cursor: pagination.page === pagination.totalPages ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', opacity: pagination.page === pagination.totalPages ? 0.5 : 1 }}>
+              <button
+                type="button"
+                onClick={() => handlePageChange(pagination.page + 1)}
+                disabled={pagination.page === pagination.totalPages}
+                title="Siguiente"
+                aria-label="Siguiente"
+                className={styles.paginationButton}
+              >
                 <ChevronRight size={16} />
               </button>
             </div>
@@ -339,27 +391,38 @@ export default function ProductosPage() {
       </div>
 
       {modalOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0, 0, 0, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' }}>
-          <div style={{ background: 'var(--color-bg)', borderRadius: 'var(--radius-lg)', width: '100%', maxWidth: '760px', maxHeight: '90vh', overflowY: 'auto', boxShadow: 'var(--shadow-lg)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.25rem', borderBottom: '1px solid var(--color-border)' }}>
-              <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)', fontWeight: 600, color: 'var(--color-text-primary)' }}>{selectedProducto ? 'Editar producto' : 'Nuevo producto'}</h3>
-              <button onClick={() => setModalOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'var(--color-text-muted)', padding: '0.25rem', lineHeight: 1 }}>x</button>
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <div className={styles.modalHeader}>
+              <h3 className={styles.modalTitle}>{selectedProducto ? 'Editar producto' : 'Nuevo producto'}</h3>
+              <button
+                type="button"
+                onClick={() => setModalOpen(false)}
+                className={styles.modalClose}
+                aria-label="Cerrar"
+              >
+                x
+              </button>
             </div>
-            <div style={{ padding: '1.25rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
-                <Field label="Nombre *" name="nombre" value={form.nombre} onChange={handleChange} maxLength={200} />
+            <div className={styles.modalBody}>
+              <div className={styles.formGrid}>
+                <Field label="Nombre *" name="nombre" value={form.nombre} onChange={handleChange} maxLength={200} autoFocus />
                 <SelectField label="Tipo de producto *" name="tipoProductoId" value={form.tipoProductoId} onChange={handleChange} options={tiposProducto} />
-                <Field label="Division *" name="division" value={form.division} onChange={handleChange} type="number" />
+                <SelectField label="Division *" name="division" value={form.division} onChange={handleChange} options={DIVISIONES} />
                 <Field label="Proveedor ultima compra *" name="proveedorUltimaCompra" value={form.proveedorUltimaCompra} onChange={handleChange} type="number" />
                 <Field label="Codigo ERP *" name="codigoErp" value={form.codigoErp} onChange={handleChange} maxLength={50} />
                 <Field label="Codigo proveedor *" name="codigoProveedor" value={form.codigoProveedor} onChange={handleChange} maxLength={50} />
                 <Field label="Codigo alimentacion *" name="codigoAlimentacion" value={form.codigoAlimentacion} onChange={handleChange} maxLength={50} />
                 <SelectField label="Unidad de medida *" name="unidadMedidaId" value={form.unidadMedidaId} onChange={handleChange} options={unidadesMedida} />
               </div>
-              {error && <p style={{ color: 'var(--color-danger)', fontSize: 'var(--font-size-sm)', margin: '0 0 1rem 0', padding: '0.75rem 1rem', background: 'var(--color-danger-bg)', border: '1px solid var(--color-danger-border)', borderRadius: 'var(--radius-md)' }}>{error}</p>}
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', paddingTop: '1rem', borderTop: '1px solid var(--color-border)' }}>
-                <button onClick={() => setModalOpen(false)} disabled={isSaving} style={{ background: 'var(--color-bg-subtle)', color: 'var(--color-text-primary)', border: '1px solid var(--color-border)', padding: '0.625rem 1.25rem', borderRadius: 'var(--radius-md)', fontSize: 'var(--font-size-sm)', fontWeight: 500, cursor: isSaving ? 'not-allowed' : 'pointer' }}>Cancelar</button>
-                <button onClick={handleGuardar} disabled={isSaving} style={{ background: 'var(--color-primary)', color: 'white', border: 'none', padding: '0.625rem 1.25rem', borderRadius: 'var(--radius-md)', fontSize: 'var(--font-size-sm)', fontWeight: 500, cursor: isSaving ? 'not-allowed' : 'pointer', opacity: isSaving ? 0.6 : 1 }}>{isSaving ? 'Guardando...' : 'Guardar'}</button>
+              {error && <p className={styles.modalError}>{error}</p>}
+              <div className={styles.modalFooter}>
+                <button type="button" onClick={() => setModalOpen(false)} disabled={isSaving} className={styles.secondaryButton}>
+                  <X size={15} /> Cancelar
+                </button>
+                <button type="button" onClick={handleGuardar} disabled={isSaving} className={styles.primaryButton}>
+                  {isSaving ? 'Guardando...' : 'Guardar'}
+                </button>
               </div>
             </div>
           </div>
@@ -367,22 +430,31 @@ export default function ProductosPage() {
       )}
 
       {confirmOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0, 0, 0, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' }}>
-          <div style={{ background: 'var(--color-bg)', borderRadius: 'var(--radius-lg)', width: '100%', maxWidth: '400px', boxShadow: 'var(--shadow-lg)' }}>
-            <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--color-border)' }}>
-              <h3 style={{ margin: 0, fontSize: 'var(--font-size-lg)', fontWeight: 600, color: 'var(--color-text-primary)' }}>Confirmar eliminacion</h3>
+        <div className={styles.confirmOverlay}>
+          <div className={styles.confirmModal}>
+            <div className={styles.confirmHeader}>
+              <h3 className={styles.modalTitle}>Confirmar eliminacion</h3>
             </div>
-            <div style={{ padding: '1.5rem' }}>
-              <p style={{ margin: 0, color: 'var(--color-text-primary)', lineHeight: 1.5 }}>Estas seguro de que deseas eliminar el producto "{selectedProducto?.nombre}"?</p>
-              {error && (
-                <p style={{ color: 'var(--color-danger)', fontSize: 'var(--font-size-sm)', margin: '1rem 0 0 0', padding: '0.75rem 1rem', background: 'var(--color-danger-bg)', border: '1px solid var(--color-danger-border)', borderRadius: 'var(--radius-md)' }}>
-                  {error}
-                </p>
-              )}
+            <div className={styles.confirmBody}>
+              <p className={styles.confirmText}>Estas seguro de que deseas eliminar el producto "{selectedProducto?.nombre}"?</p>
+              {error && <p className={styles.modalError}>{error}</p>}
             </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', padding: '1.5rem', borderTop: '1px solid var(--color-border)' }}>
-              <button onClick={() => { setConfirmOpen(false); setSelectedProducto(null); setError('') }} disabled={isDeleting} style={{ background: 'var(--color-bg-subtle)', color: 'var(--color-text-primary)', border: '1px solid var(--color-border)', padding: '0.625rem 1.25rem', borderRadius: 'var(--radius-md)', fontSize: 'var(--font-size-sm)', fontWeight: 500, cursor: isDeleting ? 'not-allowed' : 'pointer', opacity: isDeleting ? 0.6 : 1 }}>Cancelar</button>
-              <button onClick={handleEliminar} disabled={isDeleting} style={{ background: 'var(--color-danger)', color: 'white', border: 'none', padding: '0.625rem 1.25rem', borderRadius: 'var(--radius-md)', fontSize: 'var(--font-size-sm)', fontWeight: 500, cursor: isDeleting ? 'not-allowed' : 'pointer', opacity: isDeleting ? 0.6 : 1 }}>{isDeleting ? 'Eliminando...' : 'Eliminar'}</button>
+            <div className={styles.confirmFooter}>
+              <button
+                type="button"
+                onClick={() => {
+                  setConfirmOpen(false)
+                  setSelectedProducto(null)
+                  setError('')
+                }}
+                disabled={isDeleting}
+                className={styles.secondaryButton}
+              >
+                <X size={15} /> Cancelar
+              </button>
+              <button type="button" onClick={handleEliminar} disabled={isDeleting} className={styles.dangerButton}>
+                <Trash2 size={15} /> {isDeleting ? 'Eliminando...' : 'Eliminar'}
+              </button>
             </div>
           </div>
         </div>
@@ -398,13 +470,23 @@ interface FieldProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   type?: string
   maxLength?: number
+  autoFocus?: boolean
 }
 
-function Field({ label, name, value, onChange, type = 'text', maxLength }: FieldProps) {
+function Field({ label, name, value, onChange, type = 'text', maxLength, autoFocus = false }: FieldProps) {
   return (
-    <div>
-      <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: 500, color: 'var(--color-text-primary)', marginBottom: '0.5rem' }}>{label}</label>
-      <input name={name} type={type} value={value} onChange={onChange} maxLength={maxLength} style={{ width: '100%', padding: '0.625rem 0.875rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', fontSize: 'var(--font-size-sm)', background: 'var(--color-bg)', color: 'var(--color-text-primary)' }} />
+    <div className={styles.formGroup}>
+      <label htmlFor={name} className={styles.formLabel}>{label}</label>
+      <input
+        id={name}
+        name={name}
+        type={type}
+        value={value}
+        onChange={onChange}
+        maxLength={maxLength}
+        autoFocus={autoFocus}
+        className={styles.formInput}
+      />
     </div>
   )
 }
@@ -419,9 +501,9 @@ interface SelectFieldProps {
 
 function SelectField({ label, name, value, onChange, options }: SelectFieldProps) {
   return (
-    <div>
-      <label style={{ display: 'block', fontSize: 'var(--font-size-sm)', fontWeight: 500, color: 'var(--color-text-primary)', marginBottom: '0.5rem' }}>{label}</label>
-      <select name={name} value={value} onChange={onChange} style={{ width: '100%', padding: '0.625rem 0.875rem', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', fontSize: 'var(--font-size-sm)', background: 'var(--color-bg)', color: 'var(--color-text-primary)' }}>
+    <div className={styles.formGroup}>
+      <label htmlFor={name} className={styles.formLabel}>{label}</label>
+      <select id={name} name={name} value={value} onChange={onChange} className={styles.formInput}>
         <option value="">Selecciona...</option>
         {options.map((option) => (
           <option key={option.id} value={option.id}>{option.descripcion}</option>

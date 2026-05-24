@@ -25,7 +25,15 @@ const navModules: NavModule[] = [
       { label: 'Dashboard', to: '/leche/dashboard' },
       { label: 'Registros', to: '/leche/registros' },
       { label: 'Mapa', to: '/leche/mapa' },
-      { label: 'Catálogos', subItems: [{ label: 'Productos', to: '/leche/productos' }] },
+      {
+        label: 'Catálogos',
+        subItems: [
+          { label: 'Productos', to: '/leche/productos' },
+          { label: 'Tipo de producto', to: '/leche/tipos-producto' },
+          { label: 'Proveedor', to: '/leche/proveedores' },
+          { label: 'Unidades de medida', to: '/leche/unidades-medida' },
+        ],
+      },
     ],
   },
   {

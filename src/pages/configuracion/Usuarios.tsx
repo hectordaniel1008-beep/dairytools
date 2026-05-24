@@ -271,7 +271,13 @@ export default function UsuariosPage() {
                     return prev
                 }
                 setError('')
-                return prev.filter(ue => ue.empresaId !== empresaId)
+                const next = prev.filter(ue => ue.empresaId !== empresaId)
+                if (existe.esDefault) {
+                    const nextDefaultId = next[0]?.empresaId ?? null
+                    setSelectedEmpresaDefault(nextDefaultId)
+                    return next.map((ue, index) => ({ ...ue, esDefault: index === 0 }))
+                }
+                return next
             } else {
                 setError('')
                 return [...prev, { empresaId, esDefault: false }]
@@ -317,11 +323,16 @@ export default function UsuariosPage() {
             return
         }
 
+        const hasDefault = usuarioEmpresas.some(ue => ue.esDefault)
+        const asignaciones = hasDefault
+            ? usuarioEmpresas
+            : usuarioEmpresas.map((ue, index) => ({ ...ue, esDefault: index === 0 }))
+
         setIsSaving(true)
         setError('')
 
         try {
-            await usuariosService.actualizarEmpresas(selectedUsuario.id, usuarioEmpresas)
+            await usuariosService.actualizarEmpresas(selectedUsuario.id, asignaciones)
             setPanelOpen(false)
             setError('')
         } catch (err) {

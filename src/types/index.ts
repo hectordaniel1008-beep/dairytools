@@ -9,7 +9,7 @@ export interface Empresa {
   clave: string           // antes "rfc", renombrado en la BD
   color?: string
   rol: 'admin' | 'supervisor' | 'operador'  // rol del usuario EN esta empresa
-  es_default?: number      // 1 si es la empresa predeterminada del usuario
+  es_default?: boolean     // true si es la empresa predeterminada del usuario
   rfc: string             // nuevo campo para el RFC
 }
 

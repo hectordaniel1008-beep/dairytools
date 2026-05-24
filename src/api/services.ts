@@ -186,3 +186,91 @@ export const productosService = {
   catalogos: () =>
     api.get<ApiResponse<any>>('/leche/productos/catalogos'),
 }
+
+// ── Catálogos de Productos ──────────────────────────────────
+const CATALOG_ROUTE_RETRY_STATUSES = [404, 405]
+
+function shouldTryNextCatalogRoute(err: any, retryStatuses = CATALOG_ROUTE_RETRY_STATUSES) {
+  return retryStatuses.includes(err?.response?.status)
+}
+
+async function tryCatalogRoutes<T>(requests: Array<() => Promise<T>>, retryStatuses?: number[]) {
+  let lastError: unknown
+
+  for (const request of requests) {
+    try {
+      return await request()
+    } catch (err) {
+      lastError = err
+      if (!shouldTryNextCatalogRoute(err, retryStatuses)) throw err
+    }
+  }
+
+  throw lastError
+}
+
+function catalogoListFromCatalogos(key: string) {
+  return async () => {
+    const response = await productosService.catalogos()
+    return {
+      ...response,
+      data: {
+        success: response.data.success,
+        data: response.data.data?.[key] ?? [],
+      },
+    }
+  }
+}
+
+function createCatalogService(paths: string[], catalogosKey: string) {
+  return {
+    listar: catalogoListFromCatalogos(catalogosKey),
+
+    obtener: (id: number) =>
+      tryCatalogRoutes(paths.map(path => () => api.get<ApiResponse<any>>(`${path}/${id}`))),
+
+    crear: (data: any) =>
+      tryCatalogRoutes(paths.map(path => () => api.post<ApiResponse<any>>(path, data))),
+
+    actualizar: (id: number, data: any) =>
+      tryCatalogRoutes(paths.flatMap(path => [
+        () => api.patch<ApiResponse<any>>(`${path}/${id}`, data),
+        () => api.put<ApiResponse<any>>(`${path}/${id}`, data),
+      ])),
+
+    eliminar: (id: number) =>
+      tryCatalogRoutes(paths.map(path => () => api.delete<ApiResponse<null>>(`${path}/${id}`))),
+  }
+}
+
+export const tiposProductoService = {
+  ...createCatalogService([
+    '/leche/productos/tipos-producto',
+    '/leche/productos/tipo-producto',
+    '/leche/productos/tipos',
+  ], 'tiposProducto'),
+}
+
+export const proveedoresService = {
+  ...createCatalogService([
+    '/leche/productos/proveedores',
+    '/leche/productos/proveedor',
+    '/leche/proveedores',
+  ], 'proveedores'),
+
+  listar: () =>
+    tryCatalogRoutes<any>([
+      () => api.get<ApiResponse<any[]> | PaginatedResponse<any>>('/leche/productos/proveedores'),
+      () => api.get<ApiResponse<any[]> | PaginatedResponse<any>>('/leche/productos/proveedor'),
+      () => api.get<ApiResponse<any[]> | PaginatedResponse<any>>('/leche/proveedores'),
+      catalogoListFromCatalogos('proveedores'),
+    ], [400, 404, 405]),
+}
+
+export const unidadesMedidaService = {
+  ...createCatalogService([
+    '/leche/productos/unidades-medida',
+    '/leche/productos/unidad-medida',
+    '/leche/productos/unidades',
+  ], 'unidadesMedida'),
+}
