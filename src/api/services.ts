@@ -274,3 +274,25 @@ export const unidadesMedidaService = {
     '/leche/productos/unidades',
   ], 'unidadesMedida'),
 }
+
+function createCatalogGeneralService(basePath: string) {
+  return {
+    listar: () =>
+      api.get<ApiResponse<any[]>>(`/catalogos-generales/${basePath}`),
+
+    crear: (data: any) =>
+      api.post<ApiResponse<any>>(`/catalogos-generales/${basePath}`, data),
+
+    actualizar: (id: number, data: any) =>
+      api.patch<ApiResponse<any>>(`/catalogos-generales/${basePath}/${id}`, data),
+
+    eliminar: (id: number) =>
+      api.delete<ApiResponse<null>>(`/catalogos-generales/${basePath}/${id}`),
+  }
+}
+
+export const establosService = createCatalogGeneralService('establos')
+export const dietasService = createCatalogGeneralService('dietas')
+export const almacenesService = createCatalogGeneralService('almacenes')
+export const tiposSalidaLecheService = createCatalogGeneralService('tipos-salida-leche')
+export const corralesService = createCatalogGeneralService('corrales')

@@ -255,16 +255,20 @@
   width: 10%;
 }
 
+.colProveedorUltimaCompra {
+  width: 12%;
+}
+
 .colCodigoErp {
-  width: 11%;
+  width: 10%;
 }
 
 .colCodigoProveedor {
-  width: 11%;
+  width: 10%;
 }
 
 .colCodigoAlimentacion {
-  width: 13%;
+  width: 12%;
 }
 
 .colUnidad {

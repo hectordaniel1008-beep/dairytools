@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import { Milk, Sprout, Scale, Settings, X, ChevronRight } from 'lucide-react'
+import { Milk, Sprout, Scale, Settings, X, ChevronRight, Home, FileText, MapPin, BookOpen, Layers, Package } from 'lucide-react'
 import styles from './Sidebar.module.css'
 
 interface SubItem {
   label: string
   to?: string
   subItems?: SubItem[]
+  icon?: React.ReactNode
 }
 
 interface NavModule {
@@ -22,16 +23,29 @@ const navModules: NavModule[] = [
     icon: <Milk size={18} />,
     base: '/leche',
     subItems: [
-      { label: 'Dashboard', to: '/leche/dashboard' },
-      { label: 'Registros', to: '/leche/registros' },
-      { label: 'Mapa', to: '/leche/mapa' },
+      { label: 'Dashboard', to: '/leche/dashboard', icon: <Home size={14} /> },
+      { label: 'Registros', to: '/leche/registros', icon: <FileText size={14} /> },
+      { label: 'Mapa', to: '/leche/mapa', icon: <MapPin size={14} /> },
+      { label: 'Productos', to: '/leche/productos', icon: <Package size={14} /> },
       {
         label: 'Catálogos',
+        icon: <BookOpen size={14} />,
         subItems: [
-          { label: 'Productos', to: '/leche/productos' },
+
           { label: 'Tipo de producto', to: '/leche/tipos-producto' },
           { label: 'Proveedor', to: '/leche/proveedores' },
           { label: 'Unidades de medida', to: '/leche/unidades-medida' },
+        ],
+      },
+      {
+        label: 'Catalogos generales',
+        icon: <Layers size={14} />,
+        subItems: [
+          { label: 'Establos', to: '/leche/catalogos-generales/establos' },
+          { label: 'Dietas', to: '/leche/catalogos-generales/dietas' },
+          { label: 'Almacenes', to: '/leche/catalogos-generales/almacenes' },
+          { label: 'Tipos de salidas de leche', to: '/leche/catalogos-generales/tipos-salida-leche' },
+          { label: 'Corrales', to: '/leche/catalogos-generales/corrales' },
         ],
       },
     ],
@@ -97,9 +111,10 @@ export default function Sidebar({ onClose }: Props) {
         return (
           <div key={item.label}>
             <button
-              className={`${styles.subItem} ${styles.subGroup}`}
+              className={`${styles.subItem} ${styles.subGroup} ${item.icon ? styles.hasIcon : ''}`}
               onClick={() => toggleSub(base, item.label)}
             >
+              {item.icon && <span className={styles.subIcon}>{item.icon}</span>}
               <span>{item.label}</span>
               <ChevronRight size={14} className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`} />
             </button>
@@ -115,8 +130,9 @@ export default function Sidebar({ onClose }: Props) {
           <NavLink
             key={item.to}
             to={item.to!}
-            className={({ isActive }) => `${styles.subItem} ${isActive ? styles.subActive : ''}`}
+            className={({ isActive }) => `${styles.subItem} ${item.icon ? styles.hasIcon : ''} ${isActive ? styles.subActive : ''}`}
           >
+            {item.icon && <span className={styles.subIcon}>{item.icon}</span>}
             {item.label}
           </NavLink>
         )

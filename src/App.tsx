@@ -15,6 +15,11 @@ import ProductosPage from './pages/leche/Productos'
 import TiposProductoPage from './pages/leche/TiposProducto'
 import ProveedoresPage from './pages/leche/Proveedores'
 import UnidadesMedidaPage from './pages/leche/UnidadesMedida'
+import EstablosPage from './pages/leche/Establos'
+import DietasPage from './pages/leche/Dietas'
+import AlmacenesPage from './pages/leche/Almacenes'
+import TiposSalidaLechePage from './pages/leche/TiposSalidaLeche'
+import CorralesPage from './pages/leche/Corrales'
 
 // Agrícola
 import AgricolaDashboard from './pages/agricola/AgricolaDashboard'
@@ -57,6 +62,13 @@ export default function App() {
                 <Route path="tipos-producto" element={<TiposProductoPage />} />
                 <Route path="proveedores" element={<ProveedoresPage />} />
                 <Route path="unidades-medida" element={<UnidadesMedidaPage />} />
+                <Route path="catalogos-generales">
+                  <Route path="establos" element={<EstablosPage />} />
+                  <Route path="dietas" element={<DietasPage />} />
+                  <Route path="almacenes" element={<AlmacenesPage />} />
+                  <Route path="tipos-salida-leche" element={<TiposSalidaLechePage />} />
+                  <Route path="corrales" element={<CorralesPage />} />
+                </Route>
               </Route>
 
               {/* Módulo: Producción Agrícola */}

@@ -15,7 +15,9 @@ interface Producto {
   tipoProductoId: number
   tipoProducto?: CatalogoSimple
   division: number
-  proveedorUltimaCompra: number
+  proveedorId: number
+  proveedor?: CatalogoSimple
+  proveedorUltimaCompra: string
   codigoErp: string
   codigoProveedor: string
   codigoAlimentacion: string
@@ -35,7 +37,7 @@ const ITEMS_PER_PAGE = 25
 const FORM_INIT = {
   nombre: '',
   tipoProductoId: '',
-  division: '',
+  proveedorId: '',
   proveedorUltimaCompra: '',
   codigoErp: '',
   codigoProveedor: '',
@@ -43,19 +45,12 @@ const FORM_INIT = {
   unidadMedidaId: ''
 }
 
-const DIVISIONES: CatalogoSimple[] = [
-  { id: 1, descripcion: 'Agricola' },
-  { id: 2, descripcion: 'Leche' }
-]
-
-const getDivisionDescripcion = (division: number) =>
-  DIVISIONES.find(item => item.id === division)?.descripcion || division
-
 export default function ProductosPage() {
   const { empresaActual } = useEmpresa()
   const [productos, setProductos] = useState<Producto[]>([])
   const [tiposProducto, setTiposProducto] = useState<CatalogoSimple[]>([])
   const [unidadesMedida, setUnidadesMedida] = useState<CatalogoSimple[]>([])
+  const [proveedores, setProveedores] = useState<CatalogoSimple[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [pagination, setPagination] = useState<PaginationInfo>({
@@ -77,6 +72,7 @@ export default function ProductosPage() {
     if (response.data?.success) {
       setTiposProducto(response.data.data?.tiposProducto || [])
       setUnidadesMedida(response.data.data?.unidadesMedida || [])
+      setProveedores(response.data.data?.proveedores || [])
     }
   }, [])
 
@@ -141,6 +137,7 @@ export default function ProductosPage() {
     setForm({
       ...FORM_INIT,
       tipoProductoId: tiposProducto[0]?.id.toString() || '',
+      proveedorId: proveedores[0]?.id.toString() || '',
       unidadMedidaId: unidadesMedida[0]?.id.toString() || ''
     })
     setSelectedProducto(null)
@@ -153,8 +150,8 @@ export default function ProductosPage() {
     setForm({
       nombre: producto.nombre,
       tipoProductoId: producto.tipoProductoId.toString(),
-      division: producto.division.toString(),
-      proveedorUltimaCompra: producto.proveedorUltimaCompra.toString(),
+      proveedorId: producto.proveedorId?.toString() || '',
+      proveedorUltimaCompra: producto.proveedorUltimaCompra || '',
       codigoErp: producto.codigoErp,
       codigoProveedor: producto.codigoProveedor,
       codigoAlimentacion: producto.codigoAlimentacion,
@@ -172,8 +169,8 @@ export default function ProductosPage() {
   const buildPayload = () => ({
     nombre: form.nombre.trim(),
     tipoProductoId: parseInt(form.tipoProductoId),
-    division: parseInt(form.division),
-    proveedorUltimaCompra: parseInt(form.proveedorUltimaCompra),
+    proveedorId: parseInt(form.proveedorId),
+    proveedorUltimaCompra: form.proveedorUltimaCompra.trim(),
     codigoErp: form.codigoErp.trim(),
     codigoProveedor: form.codigoProveedor.trim(),
     codigoAlimentacion: form.codigoAlimentacion.trim(),
@@ -184,12 +181,11 @@ export default function ProductosPage() {
     const payload = buildPayload()
     const hasInvalidNumber = [
       payload.tipoProductoId,
-      payload.division,
-      payload.proveedorUltimaCompra,
+      payload.proveedorId,
       payload.unidadMedidaId
     ].some(Number.isNaN)
 
-    if (!payload.nombre || !payload.codigoErp || !payload.codigoProveedor || !payload.codigoAlimentacion || hasInvalidNumber) {
+    if (!payload.nombre || !payload.proveedorUltimaCompra || !payload.codigoErp || !payload.codigoProveedor || !payload.codigoAlimentacion || hasInvalidNumber) {
       setError('Todos los campos son obligatorios')
       return
     }
@@ -280,8 +276,8 @@ export default function ProductosPage() {
             <colgroup>
               <col className={styles.colNombre} />
               <col className={styles.colTipo} />
-              <col className={styles.colDivision} />
               <col className={styles.colProveedor} />
+              <col className={styles.colProveedorUltimaCompra} />
               <col className={styles.colCodigoErp} />
               <col className={styles.colCodigoProveedor} />
               <col className={styles.colCodigoAlimentacion} />
@@ -292,8 +288,8 @@ export default function ProductosPage() {
               <tr>
                 <th className={styles.tableHeader}>Nombre</th>
                 <th className={styles.tableHeader}>Tipo</th>
-                <th className={styles.tableHeader}>Division</th>
                 <th className={styles.tableHeader}>Proveedor</th>
+                <th className={styles.tableHeader}>Prov. ult. compra</th>
                 <th className={styles.tableHeader}>Codigo ERP</th>
                 <th className={styles.tableHeader}>Codigo proveedor</th>
                 <th className={styles.tableHeader}>Codigo alimentacion</th>
@@ -319,7 +315,7 @@ export default function ProductosPage() {
                   <tr key={producto.id} className={styles.tableRow}>
                     <td className={styles.nameCell}>{producto.nombre}</td>
                     <td>{producto.tipoProducto?.descripcion || producto.tipoProductoId}</td>
-                    <td>{getDivisionDescripcion(producto.division)}</td>
+                    <td>{producto.proveedor?.descripcion || producto.proveedorId}</td>
                     <td>{producto.proveedorUltimaCompra}</td>
                     <td className={styles.claveCell}>{producto.codigoErp}</td>
                     <td className={styles.claveCell}>{producto.codigoProveedor}</td>
@@ -408,8 +404,8 @@ export default function ProductosPage() {
               <div className={styles.formGrid}>
                 <Field label="Nombre *" name="nombre" value={form.nombre} onChange={handleChange} maxLength={200} autoFocus />
                 <SelectField label="Tipo de producto *" name="tipoProductoId" value={form.tipoProductoId} onChange={handleChange} options={tiposProducto} />
-                <SelectField label="Division *" name="division" value={form.division} onChange={handleChange} options={DIVISIONES} />
-                <Field label="Proveedor ultima compra *" name="proveedorUltimaCompra" value={form.proveedorUltimaCompra} onChange={handleChange} type="number" />
+                <SelectField label="Proveedor *" name="proveedorId" value={form.proveedorId} onChange={handleChange} options={proveedores} />
+                <Field label="Proveedor ultima compra *" name="proveedorUltimaCompra" value={form.proveedorUltimaCompra} onChange={handleChange} maxLength={100} />
                 <Field label="Codigo ERP *" name="codigoErp" value={form.codigoErp} onChange={handleChange} maxLength={50} />
                 <Field label="Codigo proveedor *" name="codigoProveedor" value={form.codigoProveedor} onChange={handleChange} maxLength={50} />
                 <Field label="Codigo alimentacion *" name="codigoAlimentacion" value={form.codigoAlimentacion} onChange={handleChange} maxLength={50} />

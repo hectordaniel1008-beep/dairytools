@@ -5,12 +5,20 @@ import { useEmpresa } from '../../context/EmpresaContext'
 import mStyles from '../ModalForm.module.css'
 import styles from './Productos.module.css'
 
-interface CatalogoRow {
+interface CatalogoOption {
+  id: number
+  descripcion: string
+}
+
+interface CatalogoRow extends Record<string, unknown> {
   id: number
   descripcion?: string
   nombre?: string
   rfc?: string
   estatus?: boolean
+  establo?: {
+    descripcion?: string
+  }
 }
 
 interface CatalogoService {
@@ -25,6 +33,8 @@ interface CatalogoField {
   label: string
   required?: boolean
   placeholder?: string
+  type?: 'text' | 'select'
+  options?: CatalogoOption[]
 }
 
 interface Props {
@@ -33,10 +43,12 @@ interface Props {
   icon: ComponentType<{ size?: number }>
   service: CatalogoService
   fields?: CatalogoField[]
+  fieldRenderers?: Partial<Record<string, (row: CatalogoRow) => string>>
+  optionsByField?: Partial<Record<string, CatalogoOption[]>>
 }
 
 const DEFAULT_FIELDS: CatalogoField[] = [
-  { name: 'descripcion', label: 'Descripcion', required: true }
+  { name: 'descripcion', label: 'Descripcion', required: true },
 ]
 
 function getDescripcion(row?: Partial<CatalogoRow> | null) {
@@ -55,7 +67,28 @@ function getFieldValue(row: CatalogoRow, fieldName: string) {
   return String(row[fieldName as keyof CatalogoRow] ?? '')
 }
 
-export default function CatalogoSimplePage({ title, singular, icon: Icon, service, fields = DEFAULT_FIELDS }: Props) {
+function getFieldDisplayValue(row: CatalogoRow, fieldName: string, fieldRenderers?: Partial<Record<string, (row: CatalogoRow) => string>>) {
+  const custom = fieldRenderers?.[fieldName]
+  if (custom) {
+    return custom(row) ?? ''
+  }
+
+  return getFieldValue(row, fieldName)
+}
+
+function getFieldOptions(field: CatalogoField, optionsByField?: Partial<Record<string, CatalogoOption[]>>) {
+  return optionsByField?.[field.name] ?? field.options ?? []
+}
+
+export default function CatalogoSimplePage({
+  title,
+  singular,
+  icon: Icon,
+  service,
+  fields = DEFAULT_FIELDS,
+  fieldRenderers,
+  optionsByField,
+}: Props) {
   const { empresaActual } = useEmpresa()
   const [rows, setRows] = useState<CatalogoRow[]>([])
   const [busqueda, setBusqueda] = useState('')
@@ -184,7 +217,7 @@ export default function CatalogoSimplePage({ title, singular, icon: Icon, servic
 
   const filtrados = rows.filter(row => {
     const term = busqueda.toLowerCase()
-    return fields.some(field => getFieldValue(row, field.name).toLowerCase().includes(term))
+    return fields.some(field => getFieldDisplayValue(row, field.name, fieldRenderers).toLowerCase().includes(term))
   })
 
   return (
@@ -251,7 +284,7 @@ export default function CatalogoSimplePage({ title, singular, icon: Icon, servic
                   <tr key={row.id} className={styles.tableRow}>
                     {fields.map(field => (
                       <td key={field.name} className={field.name === 'descripcion' ? styles.nameCell : undefined}>
-                        {getFieldValue(row, field.name)}
+                        {getFieldDisplayValue(row, field.name, fieldRenderers)}
                       </td>
                     ))}
                     <td className={styles.actionsCell}>
@@ -278,23 +311,42 @@ export default function CatalogoSimplePage({ title, singular, icon: Icon, servic
         title={selectedRow ? `Editar ${singular.toLowerCase()}` : `Nuevo ${singular.toLowerCase()}`}
       >
         <div className={mStyles.form}>
-          {fields.map((field, index) => (
-            <div key={field.name} className={mStyles.field}>
-              <label htmlFor={field.name} className={mStyles.label}>
-                {field.label}{field.required ? ' *' : ''}
-              </label>
-              <input
-                id={field.name}
-                name={field.name}
-                value={form[field.name] ?? ''}
-                onChange={(e) => setForm(prev => ({ ...prev, [field.name]: e.target.value }))}
-                className={mStyles.input}
-                placeholder={field.placeholder ?? field.label}
-                autoComplete="off"
-                autoFocus={index === 0}
-              />
-            </div>
-          ))}
+          {fields.map((field, index) => {
+            const options = getFieldOptions(field, optionsByField)
+
+            return (
+              <div key={field.name} className={mStyles.field}>
+                <label htmlFor={field.name} className={mStyles.label}>
+                  {field.label}{field.required ? ' *' : ''}
+                </label>
+                {field.type === 'select' ? (
+                  <select
+                    id={field.name}
+                    name={field.name}
+                    value={form[field.name] ?? ''}
+                    onChange={(e) => setForm(prev => ({ ...prev, [field.name]: e.target.value }))}
+                    className={mStyles.input}
+                  >
+                    <option value="">Selecciona...</option>
+                    {options.map(option => (
+                      <option key={option.id} value={option.id}>{option.descripcion}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    id={field.name}
+                    name={field.name}
+                    value={form[field.name] ?? ''}
+                    onChange={(e) => setForm(prev => ({ ...prev, [field.name]: e.target.value }))}
+                    className={mStyles.input}
+                    placeholder={field.placeholder ?? field.label}
+                    autoComplete="off"
+                    autoFocus={index === 0}
+                  />
+                )}
+              </div>
+            )
+          })}
 
           {error && <p className={mStyles.errorText}>{error}</p>}
 
