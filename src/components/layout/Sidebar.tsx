@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import { Milk, Sprout, Scale, Settings, X, ChevronRight, Home, FileText, MapPin, BookOpen, Layers, Package } from 'lucide-react'
+import { Archive, ArrowRight, BookOpen, Building, ChevronRight, FileText, Home, Layers, MapPin, Milk, Package, Scale, Settings, Sprout, User, X } from 'lucide-react'
 import styles from './Sidebar.module.css'
 
 interface SubItem {
@@ -31,21 +31,20 @@ const navModules: NavModule[] = [
         label: 'Catálogos',
         icon: <BookOpen size={14} />,
         subItems: [
-
-          { label: 'Tipo de producto', to: '/leche/tipos-producto' },
-          { label: 'Proveedor', to: '/leche/proveedores' },
-          { label: 'Unidades de medida', to: '/leche/unidades-medida' },
+          { label: 'Tipo de producto', to: '/leche/tipos-producto', icon: <Package size={14} /> },
+          { label: 'Proveedor', to: '/leche/proveedores', icon: <User size={14} /> },
+          { label: 'Unidades de medida', to: '/leche/unidades-medida', icon: <Scale size={14} /> },
         ],
       },
       {
         label: 'Catalogos generales',
         icon: <Layers size={14} />,
         subItems: [
-          { label: 'Establos', to: '/leche/catalogos-generales/establos' },
-          { label: 'Dietas', to: '/leche/catalogos-generales/dietas' },
-          { label: 'Almacenes', to: '/leche/catalogos-generales/almacenes' },
-          { label: 'Tipos de salidas de leche', to: '/leche/catalogos-generales/tipos-salida-leche' },
-          { label: 'Corrales', to: '/leche/catalogos-generales/corrales' },
+          { label: 'Establos', to: '/leche/catalogos-generales/establos', icon: <Building size={14} /> },
+          { label: 'Dietas', to: '/leche/catalogos-generales/dietas', icon: <Sprout size={14} /> },
+          { label: 'Almacenes', to: '/leche/catalogos-generales/almacenes', icon: <Archive size={14} /> },
+          { label: 'Tipos de salidas de leche', to: '/leche/catalogos-generales/tipos-salida-leche', icon: <ArrowRight size={14} /> },
+          { label: 'Corrales', to: '/leche/catalogos-generales/corrales', icon: <MapPin size={14} /> },
         ],
       },
     ],
@@ -55,7 +54,7 @@ const navModules: NavModule[] = [
     icon: <Sprout size={18} />,
     base: '/agricola',
     subItems: [
-      { label: 'Dashboard', to: '/agricola/dashboard' },
+      { label: 'Dashboard', to: '/agricola/dashboard', icon: <Home size={14} /> },
     ],
   },
   {
@@ -63,7 +62,7 @@ const navModules: NavModule[] = [
     icon: <Scale size={18} />,
     base: '/pesaje',
     subItems: [
-      { label: 'Dashboard', to: '/pesaje/dashboard' },
+      { label: 'Dashboard', to: '/pesaje/dashboard', icon: <Home size={14} /> },
     ],
   },
   {
@@ -71,8 +70,8 @@ const navModules: NavModule[] = [
     icon: <Settings size={18} />,
     base: '/configuracion',
     subItems: [
-      { label: 'Empresas', to: '/configuracion/empresas' },
-      { label: 'Usuarios', to: '/configuracion/usuarios' },
+      { label: 'Empresas', to: '/configuracion/empresas', icon: <Building size={14} /> },
+      { label: 'Usuarios', to: '/configuracion/usuarios', icon: <User size={14} /> },
     ],
   },
 ]

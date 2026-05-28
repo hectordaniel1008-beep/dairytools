@@ -52,7 +52,7 @@
   --color-info: #1e5a96;
 
   /* --- Sidebar — azul marino extraído del logo --- */
-  --sidebar-width: 260px;
+  --sidebar-width: 280px;
   --sidebar-bg: #12294a;
   /* Azul marino oscuro, coherente con #1e3c78 */
   --sidebar-text: #b8cce0;
@@ -256,9 +256,11 @@ textarea {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
   }
