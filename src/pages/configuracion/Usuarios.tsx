@@ -557,6 +557,10 @@ export default function UsuariosPage() {
                     {error && <p className={mStyles.errorText}>{error}</p>}
 
                     <div className={mStyles.actions}>
+                        <button className={mStyles.btnSave} onClick={handleGuardar} disabled={isSaving}>
+                            <Save size={15} />{' '}
+                            {isSaving ? 'Guardando...' : selectedUsuario ? 'Actualizar' : 'Guardar'}
+                        </button>
                         <button
                             className={mStyles.btnCancel}
                             onClick={() => {
@@ -565,10 +569,6 @@ export default function UsuariosPage() {
                             }}
                         >
                             <X size={15} /> Cancelar
-                        </button>
-                        <button className={mStyles.btnSave} onClick={handleGuardar} disabled={isSaving}>
-                            <Save size={15} />{' '}
-                            {isSaving ? 'Guardando...' : selectedUsuario ? 'Actualizar' : 'Guardar'}
                         </button>
                     </div>
                 </div>

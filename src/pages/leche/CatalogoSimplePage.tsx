@@ -351,11 +351,11 @@ export default function CatalogoSimplePage({
           {error && <p className={mStyles.errorText}>{error}</p>}
 
           <div className={mStyles.actions}>
-            <button type="button" className={mStyles.btnCancel} onClick={() => setModalOpen(false)}>
-              <X size={15} /> Cancelar
-            </button>
             <button type="button" className={mStyles.btnSave} onClick={guardar} disabled={isSaving}>
               <Save size={15} /> {isSaving ? 'Guardando...' : 'Guardar'}
+            </button>
+            <button type="button" className={mStyles.btnCancel} onClick={() => setModalOpen(false)}>
+              <X size={15} /> Cancelar
             </button>
           </div>
         </div>

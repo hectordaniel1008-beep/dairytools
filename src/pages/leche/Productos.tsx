@@ -413,11 +413,11 @@ export default function ProductosPage() {
               </div>
               {error && <p className={styles.modalError}>{error}</p>}
               <div className={styles.modalFooter}>
-                <button type="button" onClick={() => setModalOpen(false)} disabled={isSaving} className={styles.secondaryButton}>
-                  <X size={15} /> Cancelar
-                </button>
                 <button type="button" onClick={handleGuardar} disabled={isSaving} className={styles.primaryButton}>
                   {isSaving ? 'Guardando...' : 'Guardar'}
+                </button>
+                <button type="button" onClick={() => setModalOpen(false)} disabled={isSaving} className={styles.secondaryButton}>
+                  <X size={15} /> Cancelar
                 </button>
               </div>
             </div>
