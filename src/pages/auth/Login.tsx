@@ -8,11 +8,11 @@ export default function LoginPage() {
   const { login } = useAuth()
   const navigate = useNavigate()
 
-  const [email, setEmail]       = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [showPwd, setShowPwd]   = useState(false)
-  const [error, setError]       = useState('')
-  const [loading, setLoading]   = useState(false)
+  const [showPwd, setShowPwd] = useState(false)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -21,8 +21,12 @@ export default function LoginPage() {
     try {
       await login(email, password)
       navigate('/leche/dashboard')
-    } catch {
-      setError('El correo electrónico o la contraseña son incorrectos. Verifica tus datos e intenta de nuevo.')
+    } catch (err: any) {
+      // Mostrar mensaje del backend cuando esté disponible
+      // El error puede venir desde AuthContext.login (lanza Error con mensaje)
+      // o ser un AxiosError con response.data.mensaje
+      const msg = err?.response?.data?.mensaje ?? err?.message ?? 'El correo electrónico o la contraseña son incorrectos. Verifica tus datos e intenta de nuevo.'
+      setError(msg)
     } finally {
       setLoading(false)
     }
@@ -111,9 +115,9 @@ export default function LoginPage() {
         <div className={styles.demoBox}>
           <p className={styles.demoTitle}>🧪 Accesos de prueba</p>
           {[
-            { email: 'admin@dairytools.com',      pwd: 'admin123', rol: 'Admin' },
+            { email: 'admin@dairytools.com', pwd: 'admin123', rol: 'Admin' },
             { email: 'supervisor@dairytools.com', pwd: 'super123', rol: 'Supervisor' },
-            { email: 'operador@dairytools.com',   pwd: 'oper123',  rol: 'Operador' },
+            { email: 'operador@dairytools.com', pwd: 'oper123', rol: 'Operador' },
           ].map((u) => (
             <button
               key={u.email}
